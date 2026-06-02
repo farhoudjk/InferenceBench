@@ -1,0 +1,21 @@
+# ── Core async HTTP (request sending + SSE streaming) ─────────────────────
+aiohttp>=3.9.0,<4.0.0
+
+# ── Data processing ────────────────────────────────────────────────────────
+numpy>=1.26.0
+pandas>=2.2.0
+
+# ── Cost model fitting ─────────────────────────────────────────────────────
+scikit-learn>=1.4.0
+
+# ── Visualization ──────────────────────────────────────────────────────────
+matplotlib>=3.8.0
+seaborn>=0.13.0
+
+# ── GPU monitoring ─────────────────────────────────────────────────────────
+pynvml>=11.5.0          # preferred: direct NVML bindings
+# nvidia-ml-py>=12.0.0  # alternative name on some systems (same package)
+
+# ── vLLM (install separately — version must match your CUDA driver) ────────
+# pip install vllm>=0.4.0
+# See: https://docs.vllm.ai/en/latest/getting_started/installation.html
