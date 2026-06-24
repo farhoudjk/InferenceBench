@@ -244,3 +244,114 @@ If the empirical findings are as expected — no single strategy dominates, cost
 ---
 
 *Document status: Working notes — to be converted to LaTeX after RQ1–RQ3 results are in hand.*
+---------------------
+Great question — this is exactly the confusion that kills benchmark papers if not resolved before data collection. Let me clarify the fundamental issue first.
+
+The Core Confusion — You're Mixing Two Different Axes
+The strategies vary across two completely independent axes that should never be directly compared against each other:
+Axis 1: LATENCY strategies        Axis 2: THROUGHPUT strategies
+(how fast is each request?)        (how many requests per second?)
+
+chunked prefill                    quantization (fp8)
+tensor parallelism                 tensor parallelism
+speculative decoding               chunked prefill (indirectly)
+You never compare chunked-512 vs ngram-3 head-to-head on the same metric. They solve different problems. Comparing them directly would be like comparing a faster car engine against a more fuel-efficient one — meaningless without defining the goal first.
+
+The Accuracy Question — Clarification
+This is important: none of these strategies affect output quality, except quantization.
+StrategyAffects accuracy?WhyChunked prefillNoIdentical computation, just interleaved differentlyTensor parallelismNoIdentical computation, just distributedSpeculative decoding (ngram)No — mathematically guaranteedRejected guesses are discarded, accepted guesses are provably identical to what the model would have generated anywayfp8 quantizationYes, slightlyWeights are rounded — small precision loss
+This is the most common misconception about speculative decoding. It does not trade accuracy for speed. It is lossless — the output distribution is identical to normal autoregressive decoding. The only question is whether the speedup is real or marginal in practice.
+So the dimensions you actually need to measure for accuracy are only: fp16 vs fp8, nothing else.
+
+Reframing: Each RQ Has a Specific Configuration Axis and a Specific Goal
+Here is the clean mapping. Everything else falls out from this.
+
+RQ1 — Does the optimal latency strategy depend on request characteristics?
+Goal: Show that no single strategy minimizes TTFT P95 across all request types. The dominant strategy shifts based on prompt length and output length. This is the central claim of the paper.
+Configuration axis: prefill mode only
+baseline_full_fp16_tp1       ← control group
+chunked_256_fp16_tp1
+chunked_512_fp16_tp1
+chunked_1024_fp16_tp1
+Workloads to cross:
+chat_poisson_low             short prompts (128–512), short outputs (64–256)
+summarization_long_prompt    long prompts (2048–8192), medium outputs
+reasoning_bursty             medium prompts, long outputs (512–1024)
+Primary metric: TTFT P95 per (strategy, prompt_length_bucket, output_length_bucket)
+Expected finding: chunked-512 wins for long prompts at high concurrency; full prefill wins for short prompts at low concurrency. The crossover point is what you're characterizing — the "decision boundary" that a planner would use.
+Why only these four strategies for RQ1: TP and speculation confound the result. If you add TP-2 into this comparison, you can't tell whether latency changed because of the prefill mode or because of parallelism. You isolate one variable at a time, exactly like any controlled experiment.
+
+RQ2 — Are strategy costs separable across request dimensions?
+Goal: Show that prefill cost is driven by prompt length and decode cost is driven by output length, independently. This is the "separability" property — the structural claim that makes the cost model in Paper 2 tractable. If costs weren't separable, you'd need a much more complex joint model.
+Configuration axis: baseline only — this RQ is about understanding the cost structure of the baseline, not comparing strategies
+baseline_full_fp16_tp1       ← only this strategy
+Workloads: all six, to maximize the (prompt_len, output_len) space coverage
+Analysis: fit three linear regression models to TTFT:
+
+Model A: only prompt_token_len as feature
+Model B: only output_token_len as feature
+Model C: both features
+
+Primary metric: R² of each model
+Expected finding: Model A explains most TTFT variance (R² > 0.8), Model B explains little of TTFT variance but most of TPS variance. Model C is not much better than Model A for TTFT. This demonstrates separability — prefill and decode costs are driven by different request features.
+Why only baseline here: if you include chunked prefill strategies in this analysis, you're measuring how different strategies respond differently to prompt length — that's RQ1. RQ2 is a structural property of the underlying cost function before optimization.
+
+RQ3 — What is the throughput/efficiency tradeoff of speculative decoding?
+Goal: Show when speculative decoding (ngram) improves tokens/second and when it hurts. The key variable is the acceptance rate — how often the guessed tokens are actually correct. High acceptance = big speedup. Low acceptance = overhead with no benefit.
+Configuration axis: speculation variants vs baseline
+baseline_full_fp16_tp1       ← control
+spec_ngram3_fp16_tp1
+spec_ngram5_fp16_tp1
+Workloads — this is the critical design choice:
+code_uniform                 ← expect HIGH acceptance rate (repetitive boilerplate)
+chat_poisson_low             ← expect MEDIUM acceptance rate
+reasoning_bursty             ← expect LOW acceptance rate (high-entropy CoT output)
+summarization_long_prompt    ← expect MEDIUM-LOW (somewhat repetitive but varied)
+Primary metrics:
+
+Acceptance rate: accepted_tokens / draft_tokens (per request)
+Tokens/second: does speculation actually speed up decode?
+TTFT: does the speculation overhead affect time to first token?
+
+Expected finding: ngram speculation gives 20–40% throughput gain on code workloads (high repetition), near-zero gain on chat, and negative gain on reasoning (overhead exceeds benefit). This directly characterizes when speculation belongs in an execution plan and when it doesn't.
+Note: this RQ does NOT compare ngram vs chunked prefill. They are orthogonal. ngram affects decode phase. Chunked prefill affects prefill phase. Apples vs oranges.
+
+RQ4 — What is the accuracy-throughput tradeoff of quantization?
+Goal: fp8 reduces memory pressure and enables larger batches (more requests in flight simultaneously), increasing throughput. But it introduces small precision loss. Quantify the actual tradeoff — how much throughput do you gain, and what do you lose in output quality?
+Configuration axis: precision only
+baseline_full_fp16_tp1       ← control
+baseline_full_fp8_tp1
+chunked_512_fp16_tp1         ← to show: does fp8 help more or less when prefill is chunked?
+chunked_512_fp8_tp1
+Primary metrics:
+
+Throughput (requests/sec, tokens/sec): fp8 should improve this
+TTFT P95: fp8 should reduce peak memory, reducing preemptions, reducing tail latency
+Output quality score: ROUGE-L or BERTScore on a fixed evaluation set — compare fp16 vs fp8 outputs for identical prompts
+
+Expected finding: fp8 gives 15–30% throughput improvement with <1% quality degradation on standard benchmarks. This is the empirically-supported claim — not just "fp8 is less accurate" (which is vague and scary to readers) but "fp8 loses X points of ROUGE at Y% throughput gain."
+Why this needs quality measurement: this is the only RQ where you need it, and you absolutely must include it. Saying "fp8 is faster" without measuring quality impact is incomplete. Saying "fp8 loses 0.3 ROUGE-L points while gaining 25% throughput" is a result.
+
+RQ5 — What is the cost of static misconfiguration?
+Goal: Quantify the headroom available to a per-request planner. If misconfiguration costs are small, Paper 2 is not worth building. If they are large, it is.
+Configuration axis: the best single strategy per workload type vs a mismatched static deployment
+oracle: best strategy per request (from RQ1 dominance analysis)
+static_for_chat: baseline_full_fp16_tp1 — typical interactive deployment config
+static_for_batch: chunked_1024_fp16_tp1 — typical batch/summarization config
+Workloads: mixed_all (heterogeneous mix of all task types)
+Primary metric: TTFT P95 under oracle vs static_for_chat vs static_for_batch
+Expected finding: serving a mixed workload with a chat-optimized config degrades summarization TTFT P95 by 2–4×. Serving with a batch-optimized config degrades interactive chat TTFT P95 by similar magnitude. The oracle (right strategy per request) avoids both degradations. This is the quantified motivation for Paper 2.
+
+The Clean Summary Table
+RQStrategies comparedWhat variesPrimary metricAccuracy needed?RQ1Baseline vs chunked variantsPrefill chunk sizeTTFT P95 per regimeNoRQ2Baseline onlyPrompt/output lengthRegression R² (separability)NoRQ3Baseline vs ngram variantsSpeculation on/offAcceptance rate + TPSNoRQ4fp16 vs fp8Quantization precisionThroughput + ROUGE-L/BERTScoreYesRQ5Oracle vs mismatched staticWorkload–strategy matchTTFT P95 degradation ratioNo
+
+What to Do Right Now
+The current code puts all 12 strategies in one flat pool with no RQ assignment. Before running anything, do two things in config/strategies.py:
+First, add an rq field to each strategy so you always know what it's measuring:
+python@dataclass
+class Strategy:
+    name: str
+    rq: str = ""          # "RQ1" | "RQ2" | "RQ3" | "RQ4" | "RQ5"
+    ...
+Second, replace the --run-all mode with --rq RQ1 / --rq RQ3 etc. so each experimental run is purpose-built rather than a big undifferentiated sweep. Running all 12 strategies against all 6 workloads produces a lot of data you'll never use, and confuses the paper narrative — a reviewer should be able to trace every figure directly back to a specific RQ.
+Want me to refactor the config and main.py around this RQ-centric structure?
