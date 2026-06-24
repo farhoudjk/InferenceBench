@@ -24,7 +24,10 @@ REQUEST_FIELDS = [
     "prompt_token_len", "target_output_tokens", "arrival_time",
     "send_time", "ttft_s", "e2e_s", "output_tokens", "tokens_per_second",
     "status", "error", "kv_cache_usage_pct", "num_waiting_seqs",
-    "num_running_seqs", "num_preemptions",
+    "num_running_seqs", "num_preemptions", "num_preemptions_delta",
+    "spec_draft_acceptance_rate", "spec_decode_efficiency",
+    "ttfb_s", "itl_mean_ms", "itl_p50_ms", "itl_p95_ms", "itl_max_ms",
+    "completion_ratio",
 ]
 
 GPU_SAMPLE_FIELDS = [
@@ -95,7 +98,14 @@ class ResultStore:
         summary["run_id"] = self.run_id
         summary["vllm_startup_time_s"] = result.vllm_startup_time_s
         if result.gpu_result:
-            summary["gpu"] = result.gpu_result.summary()
+            gpu_summary = result.gpu_result.summary()
+            summary["gpu"] = gpu_summary
+            # Energy per output token: mean power (W) * wall time (s) = Joules,
+            # divided by total tokens generated across all successful requests.
+            total_tokens = sum(r.output_tokens for r in result.successful())
+            if gpu_summary and total_tokens > 0 and result.wall_time_s > 0:
+                energy_j = gpu_summary["power_mean_w"] * result.wall_time_s
+                summary["energy_per_token_j"] = energy_j / total_tokens
 
         self._summaries.append(summary)
         with open(self.summary_json, "w") as f:

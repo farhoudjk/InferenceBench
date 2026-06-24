@@ -81,8 +81,11 @@ class GPUMonitor:
             pynvml.nvmlInit()
             for idx in self.gpu_indices:
                 self._handles[idx] = pynvml.nvmlDeviceGetHandleByIndex(idx)
+                name = pynvml.nvmlDeviceGetName(self._handles[idx])
+                mem  = pynvml.nvmlDeviceGetMemoryInfo(self._handles[idx])
+                logger.info(f"GPU {idx}: {name} — {mem.total / (1024**3):.1f} GiB total, {mem.free / (1024**3):.1f} GiB free")
             self._nvml_available = True
-            logger.debug("pynvml initialized successfully.")
+            logger.info("pynvml initialized successfully.")
         except Exception as e:
             logger.warning(f"pynvml unavailable ({e}); falling back to nvidia-smi.")
 
@@ -169,7 +172,7 @@ class GPUMonitor:
         self._result = GPUMonitorResult(strategy_name=strategy_name)
         self._stop_event.clear()
         self._task = asyncio.ensure_future(self._monitor_loop(self._result))
-        logger.debug(f"GPU monitor started for strategy [{strategy_name}]")
+        logger.info(f"GPU monitor started for [{strategy_name}] (backend: {'pynvml' if self._nvml_available else 'nvidia-smi'})")
         return self._result
 
     async def stop(self) -> GPUMonitorResult:
@@ -180,7 +183,12 @@ class GPUMonitor:
                 await asyncio.wait_for(self._task, timeout=10)
             except asyncio.TimeoutError:
                 self._task.cancel()
-        logger.debug(
-            f"GPU monitor stopped. {len(self._result.samples)} samples collected."
-        )
+        n = len(self._result.samples)
+        summary = self._result.summary()
+        logger.info(f"GPU monitor stopped. {n} samples collected.")
+        if summary:
+            logger.info(
+                f"GPU summary — util: {summary['gpu_util_mean']:.1f}% mean / {summary['gpu_util_p95']:.1f}% p95 | "
+                f"mem: {summary['mem_util_mean']:.1f}% mean | power: {summary['power_mean_w']:.0f}W mean / {summary['power_peak_w']:.0f}W peak"
+            )
         return self._result

@@ -73,6 +73,7 @@ class ReportGenerator:
         paths += self.fig_kv_cache_vs_ttft()
         paths += self.fig_tps_by_output_length()
         paths += self.table_summary_latex()
+        paths += self.table_efficiency_latex()
         paths += self.table_interaction_effects()
         logger.info(f"Report generated: {len(paths)} artifacts.")
         return paths
@@ -140,7 +141,7 @@ class ReportGenerator:
         )
 
         fig, ax = plt.subplots(figsize=(7, 4))
-        cmap = plt.cm.get_cmap("tab10", len(strategies))
+        cmap = matplotlib.colormaps["tab10"].resampled(len(strategies))
         im = ax.imshow(heat_df.values, cmap=cmap, aspect="auto",
                        vmin=-0.5, vmax=len(strategies) - 0.5)
 
@@ -288,6 +289,44 @@ class ReportGenerator:
         logger.info(f"Saved {path}")
         return [path]
 
+    # ── Table: efficiency / SLO / mechanism metrics ───────────────────────────
+    def table_efficiency_latex(self) -> list[str]:
+        """LaTeX table: SLO attainment, queueing delay, ITL, preemptions, energy, completion ratio."""
+        if not self._summaries:
+            return []
+
+        slo_key = next((k for k in self._summaries[0] if k.startswith("slo_attainment_ttft_")), None)
+
+        rows = []
+        for s in self._summaries:
+            row = {
+                "Strategy": s.get("strategy", "").replace("_", "\\_"),
+                "SLO Attain. (\\%)": f"{s.get(slo_key, 0):.1f}" if slo_key else "—",
+                "Queue Delay P50 (ms)": f"{s.get('queue_delay_p50_ms', 0):.0f}",
+                "ITL Mean (ms)": f"{s.get('itl_mean_ms', 0):.1f}" if "itl_mean_ms" in s else "—",
+                "Preemptions": str(s.get("total_preemptions", 0)),
+                "Energy/Token (J)": f"{s.get('energy_per_token_j', 0):.3f}" if "energy_per_token_j" in s else "—",
+                "Completion Ratio": f"{s.get('completion_ratio_mean', 0):.2f}",
+            }
+            if "spec_draft_acceptance_rate_mean" in s:
+                row["Spec. Accept. Rate"] = f"{s['spec_draft_acceptance_rate_mean']:.2f}"
+            rows.append(row)
+
+        df = pd.DataFrame(rows)
+        latex = df.to_latex(
+            index=False, escape=False,
+            caption="Mechanistic and efficiency metrics: SLO attainment (TTFT-based), "
+                    "queueing delay, inter-token latency, preemption count, energy per "
+                    "output token, and output completion ratio.",
+            label="tab:efficiency",
+        )
+
+        path = os.path.join(self.table_dir, "efficiency.tex")
+        with open(path, "w") as f:
+            f.write(latex)
+        logger.info(f"Saved {path}")
+        return [path]
+
     # ── Table 2: Interaction effects ──────────────────────────────────────────
     def table_interaction_effects(self) -> list[str]:
         """LaTeX table: improvement vs baseline for combined strategies."""
@@ -307,7 +346,7 @@ class ReportGenerator:
                 "Strategy": strat.replace("_", "\\_"),
                 "TTFT P95 (ms)": f"{p95:.0f}",
                 r"$\Delta$ vs Baseline": f"{delta:+.0f}",
-                "Improvement (\%)": f"{delta/baseline_p95*100:+.1f}",
+                r"Improvement (\%)": f"{delta/baseline_p95*100:+.1f}",
             })
 
         latex = pd.DataFrame(rows).to_latex(
