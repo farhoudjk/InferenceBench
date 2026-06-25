@@ -18,7 +18,7 @@ import aiohttp
 from benchmark.launcher import VLLMInstance, get_vllm_metrics
 from benchmark.gpu_monitor import GPUMonitor, GPUMonitorResult
 from config.strategies import Strategy
-from config.workloads import RequestSpec, WorkloadConfig, build_trace
+from config.workloads import ArrivalPattern, RequestSpec, WorkloadConfig, build_trace
 
 logger = logging.getLogger(__name__)
 
@@ -78,6 +78,8 @@ class BenchmarkResult:
     gpu_result: Optional[GPUMonitorResult] = None
     wall_time_s: float = 0.0
     vllm_startup_time_s: float = 0.0
+    rate_label: str = ""          # e.g. "low", "med", "high", "bursty"
+    effective_rps: float = 0.0    # actual rps used (0 for bursty)
 
     def successful(self) -> list[RequestResult]:
         return [r for r in self.requests if r.status == "ok"]
@@ -106,6 +108,8 @@ class BenchmarkResult:
         result = {
             "strategy":       self.strategy.name,
             "workload":       self.workload_name,
+            "rate_label":     self.rate_label,
+            "effective_rps":  self.effective_rps,
             "n_ok":           len(ok),
             "n_error":        len(self.requests) - len(ok),
             "ttft_p50_ms":    pct(ttfts, 50),
@@ -288,19 +292,30 @@ async def run_benchmark(
     max_concurrent: int = 64,
     metrics_poll_interval_s: float = 5.0,
     seed: int = 42,
+    arrival_pattern: Optional[ArrivalPattern] = None,
+    target_rps: Optional[float] = None,
+    rate_label: str = "",
 ) -> BenchmarkResult:
     """
     Replay workload trace against vLLM instance.
-    Respects arrival times (Poisson / bursty / uniform).
-    Returns BenchmarkResult with per-request metrics.
+
+    arrival_pattern / target_rps override the workload's defaults (set from TUI
+    rate selection).  rate_label is a human-readable tag ("low", "med", "high",
+    "bursty") stored in the result for grouping in reports.
     """
     strategy = instance.strategy
-    trace = build_trace(workload_config, seed=seed)
+    trace = build_trace(
+        workload_config, seed=seed,
+        arrival_pattern=arrival_pattern,
+        target_rps=target_rps,
+    )
 
     result = BenchmarkResult(
         strategy=strategy,
         workload_name=workload_config.name,
         vllm_startup_time_s=instance.startup_time_s,
+        rate_label=rate_label or workload_config.default_arrival_pattern.value,
+        effective_rps=target_rps or workload_config.default_target_rps,
     )
 
     gpu_result = gpu_monitor.start(strategy.name) if gpu_monitor else None

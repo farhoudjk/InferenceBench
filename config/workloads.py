@@ -2,14 +2,17 @@
 Workload configuration and request trace generation.
 
 Covers four task types x five prompt lengths x four output lengths.
-Arrival processes: uniform, Poisson (low/high load), bursty.
+Arrival processes: Poisson (low/med/high rps), bursty.
+
+Rate is decoupled from workload shape: pick a WorkloadConfig (task type +
+prompt/output distributions) and an ArrivalRate (rps) separately, then call
+build_trace() which accepts the rate override at call time.
 """
 
 import random
-import time
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Generator
+from typing import Optional
 
 
 class TaskType(str, Enum):
@@ -20,10 +23,20 @@ class TaskType(str, Enum):
 
 
 class ArrivalPattern(str, Enum):
-    UNIFORM  = "uniform"
-    POISSON_LOW  = "poisson_low"
-    POISSON_HIGH = "poisson_high"
-    BURSTY   = "bursty"
+    POISSON = "poisson"
+    BURSTY  = "bursty"
+
+
+# ── Named arrival rates ───────────────────────────────────────────────────────
+
+ARRIVAL_RATES: dict[str, float] = {
+    "low":    2.0,   # 2 rps
+    "med":    4.0,   # 4 rps
+    "high":   8.0,   # 8 rps
+}
+# "bursty" is a separate pattern, not a rps value.
+
+BURSTY_LABEL = "bursty"
 
 
 @dataclass
@@ -32,32 +45,31 @@ class RequestSpec:
     request_id: str
     task_type: TaskType
     prompt: str
-    prompt_token_len: int       # approximate, measured after tokenization
-    target_output_tokens: int   # max_tokens sent to vLLM
-    arrival_time: float         # seconds from trace start (0.0 = immediate)
-    priority: int = 1           # 1=normal, 2=high
+    prompt_token_len: int
+    target_output_tokens: int
+    arrival_time: float
+    priority: int = 1
 
 
 @dataclass
 class WorkloadConfig:
+    """Shape of a workload: task type, prompt/output distributions, and defaults."""
     name: str
     task_type: TaskType
-    prompt_lengths: list[int]               # target prompt token counts
-    output_lengths: list[int]               # max_tokens values
-    arrival_pattern: ArrivalPattern
-    num_requests: int = 200
-    target_rps: float = 2.0                 # requests per second (Poisson mean)
-    burst_size: int = 10                    # requests per burst (bursty pattern)
-    burst_interval_s: float = 5.0          # seconds between bursts
+    prompt_lengths: list[int]
+    output_lengths: list[int]
+    num_requests: int = 300
+    # Default rate/pattern (used when no override is supplied to build_trace)
+    default_arrival_pattern: ArrivalPattern = ArrivalPattern.POISSON
+    default_target_rps: float = 2.0
+    # Bursty-specific params (only used when pattern=BURSTY)
+    burst_size: int = 10
+    burst_interval_s: float = 5.0
 
 
 # ── Prompt templates per task type ──────────────────────────────────────────
 
 def _make_prompt(task_type: TaskType, prompt_length_tokens: int) -> str:
-    """
-    Generate a synthetic prompt of approximately prompt_length_tokens tokens.
-    Uses task-appropriate templates; pads with domain-relevant filler.
-    """
     base_templates = {
         TaskType.CHAT: (
             "You are a helpful assistant. The user asks: "
@@ -102,25 +114,17 @@ def _make_prompt(task_type: TaskType, prompt_length_tokens: int) -> str:
     base = base_templates[task_type]
     filler = filler_by_type[task_type]
 
-    # ~1.3 tokens per word average; approximate target
     target_words = int(prompt_length_tokens / 1.3)
     base_words = len(base.split())
     filler_words = len(filler.split())
 
     repeats = max(1, (target_words - base_words) // filler_words)
     prompt = base + (filler * repeats)
-
-    # trim to approximate target
     words = prompt.split()[:target_words]
     return " ".join(words)
 
 
 # ── Arrival time generators ──────────────────────────────────────────────────
-
-def _uniform_arrivals(n: int, rps: float) -> list[float]:
-    interval = 1.0 / rps
-    return [i * interval for i in range(n)]
-
 
 def _poisson_arrivals(n: int, rps: float, seed: int = 42) -> list[float]:
     rng = random.Random(seed)
@@ -141,7 +145,6 @@ def _bursty_arrivals(
 ) -> list[float]:
     rng = random.Random(seed)
     times = []
-    t = 0.0
     burst_start = 0.0
     within_burst_interval = 1.0 / within_burst_rps
 
@@ -157,25 +160,29 @@ def _bursty_arrivals(
 
 # ── Workload builder ─────────────────────────────────────────────────────────
 
-def build_trace(config: WorkloadConfig, seed: int = 42) -> list[RequestSpec]:
+def build_trace(
+    config: WorkloadConfig,
+    seed: int = 42,
+    arrival_pattern: Optional[ArrivalPattern] = None,
+    target_rps: Optional[float] = None,
+) -> list[RequestSpec]:
     """
     Generate a request trace from a WorkloadConfig.
-    Cycles through prompt_lengths x output_lengths combinations.
-    """
-    rng = random.Random(seed)
-    n = config.num_requests
 
-    # arrival times
-    if config.arrival_pattern == ArrivalPattern.UNIFORM:
-        arrival_times = _uniform_arrivals(n, config.target_rps)
-    elif config.arrival_pattern in (ArrivalPattern.POISSON_LOW, ArrivalPattern.POISSON_HIGH):
-        arrival_times = _poisson_arrivals(n, config.target_rps, seed=seed)
-    else:  # BURSTY
+    arrival_pattern and target_rps override the workload's defaults when supplied.
+    For BURSTY pattern, target_rps is ignored (burst params come from config).
+    """
+    pattern = arrival_pattern if arrival_pattern is not None else config.default_arrival_pattern
+    rps     = target_rps     if target_rps     is not None else config.default_target_rps
+    n       = config.num_requests
+
+    if pattern == ArrivalPattern.BURSTY:
         arrival_times = _bursty_arrivals(
             n, config.burst_size, config.burst_interval_s, seed=seed
         )
+    else:
+        arrival_times = _poisson_arrivals(n, rps, seed=seed)
 
-    # build requests
     length_pairs = [
         (p, o)
         for p in config.prompt_lengths
@@ -198,65 +205,52 @@ def build_trace(config: WorkloadConfig, seed: int = 42) -> list[RequestSpec]:
     return requests
 
 
-# ── Predefined workload configurations ───────────────────────────────────────
+# ── Predefined workload shapes ───────────────────────────────────────────────
+# Rate is NOT embedded here — it is selected separately at run time.
 
 WORKLOADS: dict[str, WorkloadConfig] = {
 
-    "chat_poisson_low": WorkloadConfig(
-        name="chat_poisson_low",
+    "chat": WorkloadConfig(
+        name="chat",
         task_type=TaskType.CHAT,
         prompt_lengths=[128, 256, 512, 1024],
         output_lengths=[64, 128, 256],
-        arrival_pattern=ArrivalPattern.POISSON_LOW,
         num_requests=300,
-        target_rps=1.0,
+        default_target_rps=2.0,
     ),
-    "chat_poisson_high": WorkloadConfig(
-        name="chat_poisson_high",
-        task_type=TaskType.CHAT,
-        prompt_lengths=[128, 256, 512, 1024],
-        output_lengths=[64, 128, 256],
-        arrival_pattern=ArrivalPattern.POISSON_HIGH,
-        num_requests=300,
-        target_rps=4.0,
-    ),
-    "code_uniform": WorkloadConfig(
-        name="code_uniform",
+    "code": WorkloadConfig(
+        name="code",
         task_type=TaskType.CODE,
         prompt_lengths=[256, 512, 1024, 2048],
         output_lengths=[256, 512, 1024],
-        arrival_pattern=ArrivalPattern.UNIFORM,
         num_requests=200,
-        target_rps=1.5,
+        default_target_rps=2.0,
     ),
-    "summarization_long_prompt": WorkloadConfig(
-        name="summarization_long_prompt",
+    "summarization": WorkloadConfig(
+        name="summarization",
         task_type=TaskType.SUMMARIZATION,
         prompt_lengths=[2048, 4096, 8192],
         output_lengths=[128, 256, 512],
-        arrival_pattern=ArrivalPattern.POISSON_LOW,
         num_requests=150,
-        target_rps=0.5,
+        default_target_rps=2.0,
     ),
-    "reasoning_bursty": WorkloadConfig(
-        name="reasoning_bursty",
+    "reasoning": WorkloadConfig(
+        name="reasoning",
         task_type=TaskType.REASONING,
         prompt_lengths=[256, 512, 1024],
-        output_lengths=[512, 1024],          # reasoning models produce long outputs
-        arrival_pattern=ArrivalPattern.BURSTY,
+        output_lengths=[512, 1024],
         num_requests=200,
-        target_rps=2.0,
+        default_arrival_pattern=ArrivalPattern.BURSTY,
         burst_size=8,
         burst_interval_s=10.0,
     ),
-    "mixed_all": WorkloadConfig(
-        name="mixed_all",
-        task_type=TaskType.CHAT,             # task_type overridden per request below
+    "mixed": WorkloadConfig(
+        name="mixed",
+        task_type=TaskType.CHAT,
         prompt_lengths=[128, 512, 1024, 4096],
         output_lengths=[64, 256, 512, 1024],
-        arrival_pattern=ArrivalPattern.POISSON_LOW,
         num_requests=400,
-        target_rps=2.0,
+        default_target_rps=2.0,
     ),
 }
 

@@ -35,7 +35,7 @@ from benchmark.launcher import VLLMLauncher, kill_stale_gpu_workers
 from benchmark.runner import run_benchmark
 from benchmark.storage import ResultStore
 from config.strategies import STRATEGIES, get_strategies_for_dimension
-from config.workloads import WORKLOADS, get_workload
+from config.workloads import ARRIVAL_RATES, ArrivalPattern, BURSTY_LABEL, WORKLOADS, get_workload
 
 def _setup_logging(debug: bool = False):
     logging.basicConfig(
@@ -67,8 +67,12 @@ def parse_args():
     g.add_argument("--dimension", choices=["chunked_prefill","tensor_parallel","speculation","quantization","interaction"])
     g.add_argument("--report-only", action="store_true")
 
-    p.add_argument("--workload", default="chat_poisson_low", help="Workload name")
+    p.add_argument("--workload", default="chat", help="Workload name")
     p.add_argument("--workloads", nargs="+", help="Multiple workloads")
+    p.add_argument("--rates", nargs="+", default=["low"],
+                   help="Arrival rates: low(2rps) med(4rps) high(8rps) bursty")
+    p.add_argument("--max-num-seqs-override", type=int, default=None,
+                   help="Override max_num_seqs for the selected strategy (from TUI seqs sweep)")
     p.add_argument("--no-gpu-monitor", action="store_true")
     p.add_argument("--debug", action="store_true", help="Enable DEBUG logging for request-level diagnostics")
     p.add_argument("--num-requests", type=int, default=None,
@@ -112,11 +116,32 @@ async def run(args):
         logger.error("No execution mode specified.")
         sys.exit(1)
 
+    # Apply max_num_seqs override from TUI seqs sweep (mutates strategy objects)
+    if args.max_num_seqs_override is not None:
+        for s in strategies:
+            logger.info(
+                f"Overriding max_num_seqs for [{s.name}]: "
+                f"{s.max_num_seqs} → {args.max_num_seqs_override}"
+            )
+            s.max_num_seqs = args.max_num_seqs_override
+
     workloads = [get_workload(w) for w in workload_names]
     if args.num_requests is not None:
         for wl in workloads:
             logger.info(f"Overriding num_requests for [{wl.name}]: {wl.num_requests} → {args.num_requests}")
             wl.num_requests = args.num_requests
+
+    # Parse rate labels → (ArrivalPattern, rps | None)
+    rate_labels = getattr(args, "rates", ["low"])
+    rate_configs: list[tuple[str, ArrivalPattern, float | None]] = []
+    for rl in rate_labels:
+        if rl == BURSTY_LABEL:
+            rate_configs.append((rl, ArrivalPattern.BURSTY, None))
+        elif rl in ARRIVAL_RATES:
+            rate_configs.append((rl, ArrivalPattern.POISSON, ARRIVAL_RATES[rl]))
+        else:
+            logger.warning(f"Unknown rate label '{rl}', skipping.")
+
     launcher  = VLLMLauncher(
         model=args.model,
         results_dir=store.run_dir_path(),
@@ -126,49 +151,58 @@ async def run(args):
     logger.info(f"Run ID: {run_id}")
     logger.info(f"Strategies: {[s.name for s in strategies]}")
     logger.info(f"Workloads:  {workload_names}")
+    logger.info(f"Rates:      {[r[0] for r in rate_configs]}")
     logger.info(f"Results:    {store.run_dir_path()}")
 
-    total = len(strategies) * len(workloads)
+    total = len(strategies) * len(workloads) * len(rate_configs)
     done  = 0
 
     for strategy in strategies:
         for workload in workloads:
-            done += 1
-            logger.info(
-                f"\n{'='*60}\n"
-                f"[{done}/{total}] Strategy: {strategy.name}  Workload: {workload.name}\n"
-                f"{'='*60}"
-            )
-
-            # Skip if tensor parallel requires more GPUs than available
-            if strategy.tensor_parallel_size > len(gpu_indices):
-                logger.warning(
-                    f"Skipping {strategy.name}: requires TP={strategy.tensor_parallel_size} "
-                    f"but only {len(gpu_indices)} GPU(s) available."
+            for rate_label, arr_pattern, arr_rps in rate_configs:
+                done += 1
+                logger.info(
+                    f"\n{'='*60}\n"
+                    f"[{done}/{total}] Strategy: {strategy.name}  "
+                    f"Workload: {workload.name}  Rate: {rate_label}\n"
+                    f"{'='*60}"
                 )
-                continue
 
-            gpu_monitor = (
-                GPUMonitor(gpu_indices=gpu_indices)
-                if not args.no_gpu_monitor else None
-            )
+                # Skip if tensor parallel requires more GPUs than available
+                if strategy.tensor_parallel_size > len(gpu_indices):
+                    logger.warning(
+                        f"Skipping {strategy.name}: requires TP={strategy.tensor_parallel_size} "
+                        f"but only {len(gpu_indices)} GPU(s) available."
+                    )
+                    continue
 
-            try:
-                instance = await launcher.start(strategy, port=args.port)
-                result = await run_benchmark(
-                    instance=instance,
-                    workload_config=workload,
-                    gpu_monitor=gpu_monitor,
-                    request_timeout_s=args.request_timeout,
-                    max_concurrent=args.max_concurrent,
-                    seed=args.seed,
+                gpu_monitor = (
+                    GPUMonitor(gpu_indices=gpu_indices)
+                    if not args.no_gpu_monitor else None
                 )
-                store.save(result)
 
-            except Exception as e:
-                logger.error(f"Failed [{strategy.name}×{workload.name}]: {e}", exc_info=True)
-            finally:
-                launcher.stop()
+                try:
+                    instance = await launcher.start(strategy, port=args.port)
+                    result = await run_benchmark(
+                        instance=instance,
+                        workload_config=workload,
+                        gpu_monitor=gpu_monitor,
+                        request_timeout_s=args.request_timeout,
+                        max_concurrent=args.max_concurrent,
+                        seed=args.seed,
+                        arrival_pattern=arr_pattern,
+                        target_rps=arr_rps,
+                        rate_label=rate_label,
+                    )
+                    store.save(result)
+
+                except Exception as e:
+                    logger.error(
+                        f"Failed [{strategy.name}×{workload.name}×{rate_label}]: {e}",
+                        exc_info=True,
+                    )
+                finally:
+                    launcher.stop()
 
     # ── Post-benchmark: analysis and report ──────────────────────────────────
     logger.info("\nGenerating report...")

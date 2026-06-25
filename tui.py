@@ -19,8 +19,8 @@ from rich import box
 from rich.text import Text
 
 from benchmark.launcher import kill_stale_gpu_workers
-from config.strategies import STRATEGIES, get_strategies_for_dimension
-from config.workloads import WORKLOADS
+from config.strategies import STRATEGIES, Strategy, get_strategies_for_dimension
+from config.workloads import ARRIVAL_RATES, ArrivalPattern, BURSTY_LABEL, WORKLOADS
 
 console = Console()
 
@@ -220,21 +220,66 @@ def ask_strategies() -> list[str]:
     return selected or []
 
 
-def ask_workloads() -> list[str]:
-    choices = [
+def ask_workloads() -> tuple[list[str], list[str]]:
+    """Return (workload_names, rate_labels)."""
+
+    # ── Step 1: workload shapes ──────────────────────────────────────────────
+    wl_choices = [
         questionary.Choice(
-            f"{name}  [n={WORKLOADS[name].num_requests}, {WORKLOADS[name].arrival_pattern.name.lower()}]",
+            f"{name}  [n={WORKLOADS[name].num_requests}, "
+            f"{WORKLOADS[name].task_type.value}]",
             value=name,
             checked=False,
         )
         for name in WORKLOADS
     ]
+    selected_wl = questionary.checkbox(
+        "Select workload(s)  [Space=toggle, Enter=confirm]:",
+        choices=wl_choices,
+        style=STYLE,
+    ).ask() or []
+
+    # ── Step 2: arrival rates ────────────────────────────────────────────────
+    rate_choices = [
+        questionary.Choice("low    — 2 rps  (Poisson)",  value="low",    checked=False),
+        questionary.Choice("med    — 4 rps  (Poisson)",  value="med",    checked=False),
+        questionary.Choice("high   — 8 rps  (Poisson)",  value="high",   checked=False),
+        questionary.Choice("bursty — burst pattern",     value="bursty", checked=False),
+    ]
+    selected_rates = questionary.checkbox(
+        "Select arrival rate(s)  [Space=toggle, Enter=confirm]:",
+        choices=rate_choices,
+        style=STYLE,
+    ).ask() or []
+
+    return selected_wl, selected_rates
+
+
+MAX_NUM_SEQS_OPTIONS = [
+    ("default", None),
+    ("16  — low parallelism",   16),
+    ("32  — medium",            32),
+    ("64  — high parallelism",  64),
+    ("128 — very high",        128),
+]
+
+def ask_max_num_seqs() -> list[int | None]:
+    """
+    Multi-select for scheduler concurrency (max_num_seqs).
+    Each selected value produces a separate run per strategy.
+    Returns list of values (None = use strategy default).
+    """
+    choices = [
+        questionary.Choice(label, value=val, checked=False)
+        for label, val in MAX_NUM_SEQS_OPTIONS
+    ]
     selected = questionary.checkbox(
-        "Select workloads  [Space=toggle, Enter=confirm]:",
+        "Select max_num_seqs (scheduler concurrency)  [Space=toggle, Enter=confirm]:\n"
+        "  Each value runs as a separate sweep — pick one to keep it simple:",
         choices=choices,
         style=STYLE,
-    ).ask()
-    return selected or []
+    ).ask() or []
+    return selected if selected else [None]   # default if none picked
 
 
 def ask_gpus() -> str:
@@ -275,6 +320,7 @@ def ask_options() -> dict:
             questionary.Choice("200  — standard (~8–10 min)",          value="200"),
             questionary.Choice("300  — default (~12–15 min)",          value="300"),
             questionary.Choice("500  — thorough (~20–25 min)",         value="500"),
+            questionary.Choice("1000 — full run  (~40–50 min)",        value="1000"),
             questionary.Choice("Custom",                                value="custom"),
         ],
         style=STYLE,
@@ -285,36 +331,26 @@ def ask_options() -> dict:
             "Enter number of requests:", default="300", style=STYLE
         ).ask()
 
-    max_concurrent = questionary.select(
-        "Max concurrent requests (lower = less vLLM backpressure):",
-        choices=[
-            questionary.Choice("8",          value="8"),
-            questionary.Choice("16 (default)", value="16"),
-            questionary.Choice("24",         value="24"),
-            questionary.Choice("32",         value="32"),
-            questionary.Choice("40",         value="40"),
-            questionary.Choice("48",         value="48"),
-            questionary.Choice("Custom",     value="custom"),
-        ],
-        style=STYLE,
-    ).ask()
-
-    if max_concurrent == "custom":
-        max_concurrent = questionary.text(
-            "Enter max concurrent requests:", default="16", style=STYLE
-        ).ask()
-
     return {"gpu": gpu, "port": port, "timeout": timeout,
-            "num_requests": num_requests, "max_concurrent": max_concurrent}
+            "num_requests": num_requests, "max_concurrent": "64"}
 
 
-def confirm_and_run(model: str, strategies: list[str], workloads: list[str], opts: dict):
+def confirm_and_run(
+    model: str,
+    strategies: list[str],
+    workloads: list[str],
+    rates: list[str],
+    seqs_values: list[int | None],
+    opts: dict,
+):
     console.print()
     console.print("[bold cyan]Run summary[/bold cyan]")
     console.print(f"  Model:      [yellow]{model}[/yellow]")
     for wl in workloads:
         wl_obj = WORKLOADS[wl]
-        console.print(f"  Workload:   [yellow]{wl}[/yellow]  [dim](n={wl_obj.num_requests}, {wl_obj.arrival_pattern.name.lower()})[/dim]")
+        console.print(f"  Workload:   [yellow]{wl}[/yellow]  [dim](n={wl_obj.num_requests}, {wl_obj.task_type.value})[/dim]")
+    console.print(f"  Rates:      [yellow]{', '.join(rates)}[/yellow]")
+    console.print(f"  max_num_seqs: [yellow]{', '.join(str(v) if v else 'default' for v in seqs_values)}[/yellow]")
     console.print(f"  GPU(s):     [yellow]{opts['gpu']}[/yellow]")
     console.print()
     strategy_table(strategies)
@@ -323,12 +359,19 @@ def confirm_and_run(model: str, strategies: list[str], workloads: list[str], opt
         console.print("[dim]Cancelled.[/dim]")
         return
 
-    # Guard against orphaned vLLM workers left on the GPU from a previous
-    # crashed/interrupted run (e.g. the TUI itself was killed mid-benchmark).
     kill_stale_gpu_workers()
 
     python = sys.executable
     run_id = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+    # Build the list of (strategy_name, max_num_seqs_override) combos.
+    # If only one seqs value and it's None (default), no override is applied.
+    combos: list[tuple[str, int | None]] = [
+        (strat, seqs)
+        for strat in strategies
+        for seqs in seqs_values
+    ]
+
     base_cmd = [
         python, "main.py",
         "--model", model,
@@ -339,31 +382,22 @@ def confirm_and_run(model: str, strategies: list[str], workloads: list[str], opt
         "--num-requests", opts["num_requests"],
         "--max-concurrent", opts["max_concurrent"],
         "--workloads",
-    ] + workloads
+    ] + workloads + ["--rates"] + rates
 
+    console.print(f"[dim]Run ID: {run_id} (shared across all runs)[/dim]\n")
     console.print()
 
-    if len(strategies) == len(STRATEGIES):
-        # all strategies: use --run-all (single process, single run_id)
-        cmd = base_cmd + ["--run-all"]
-        # remove --workloads if using --run-all without explicit workloads list
+    n_total = len(combos)
+    for i, (strat, seqs) in enumerate(combos, 1):
+        label = strat if seqs is None else f"{strat} [max_num_seqs={seqs}]"
+        console.rule(f"[cyan]{i}/{n_total} — {label}[/cyan]")
+        cmd = base_cmd + ["--strategy", strat]
+        if seqs is not None:
+            cmd += ["--max-num-seqs-override", str(seqs)]
         console.print(f"[dim]Command: {' '.join(cmd)}[/dim]\n")
-        subprocess.run(cmd)
-    elif len(strategies) == 1:
-        cmd = base_cmd + ["--strategy", strategies[0]]
-        console.print(f"[dim]Command: {' '.join(cmd)}[/dim]\n")
-        subprocess.run(cmd)
-    else:
-        # Multiple strategies: run sequentially, sharing the same run_id
-        # so all results accumulate in one directory and the final report covers all
-        console.print(f"[dim]Run ID: {run_id} (shared across all strategies)[/dim]\n")
-        for i, strat in enumerate(strategies, 1):
-            console.rule(f"[cyan]{i}/{len(strategies)} — {strat}[/cyan]")
-            cmd = base_cmd + ["--strategy", strat]
-            console.print(f"[dim]Command: {' '.join(cmd)}[/dim]\n")
-            ret = subprocess.run(cmd)
-            if ret.returncode != 0:
-                console.print(f"[red]Strategy {strat} failed (returncode={ret.returncode}). Continuing...[/red]")
+        ret = subprocess.run(cmd)
+        if ret.returncode != 0:
+            console.print(f"[red]Run {label} failed (returncode={ret.returncode}). Continuing...[/red]")
 
     console.print()
     console.print("[bold green]✓ Benchmark finished.[/bold green]")
@@ -382,13 +416,18 @@ def main():
         console.print("[red]No strategies selected. Exiting.[/red]")
         return
 
-    workloads = ask_workloads()
+    workloads, rates = ask_workloads()
     if not workloads:
         console.print("[red]No workloads selected. Exiting.[/red]")
         return
+    if not rates:
+        console.print("[red]No arrival rates selected. Exiting.[/red]")
+        return
+
+    seqs_values = ask_max_num_seqs()
 
     opts = ask_options()
-    confirm_and_run(model, strategies, workloads, opts)
+    confirm_and_run(model, strategies, workloads, rates, seqs_values, opts)
 
 
 if __name__ == "__main__":

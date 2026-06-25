@@ -28,6 +28,8 @@ REQUEST_FIELDS = [
     "spec_draft_acceptance_rate", "spec_decode_efficiency",
     "ttfb_s", "itl_mean_ms", "itl_p50_ms", "itl_p95_ms", "itl_max_ms",
     "completion_ratio",
+    # rate columns — joined from BenchmarkResult, not RequestResult
+    "rate_label", "effective_rps",
 ]
 
 GPU_SAMPLE_FIELDS = [
@@ -62,7 +64,7 @@ class ResultStore:
 
     def save(self, result: BenchmarkResult) -> None:
         """Persist a completed BenchmarkResult."""
-        self._save_requests(result.requests)
+        self._save_requests(result)
         if result.gpu_result:
             self._save_gpu_samples(result.gpu_result)
         self._save_summary(result)
@@ -71,15 +73,18 @@ class ResultStore:
             f"for [{result.strategy.name}]"
         )
 
-    def _save_requests(self, requests: list[RequestResult]) -> None:
+    def _save_requests(self, result: BenchmarkResult) -> None:
         write_header = not self._requests_header_written
         with open(self.requests_csv, "a", newline="") as f:
             writer = csv.DictWriter(f, fieldnames=REQUEST_FIELDS, extrasaction="ignore")
             if write_header:
                 writer.writeheader()
                 self._requests_header_written = True
-            for req in requests:
-                writer.writerow({k: getattr(req, k, "") for k in REQUEST_FIELDS})
+            for req in result.requests:
+                row = {k: getattr(req, k, "") for k in REQUEST_FIELDS}
+                row["rate_label"]    = result.rate_label
+                row["effective_rps"] = result.effective_rps
+                writer.writerow(row)
 
     def _save_gpu_samples(self, gpu_result: GPUMonitorResult) -> None:
         write_header = not self._gpu_header_written
