@@ -411,14 +411,41 @@ class VLLMLauncher:
 
 
 def kill_stale_gpu_workers() -> None:
-    """SIGKILL any Python processes with significant GPU memory (vLLM engine workers).
+    """SIGKILL any stale vLLM processes: both server frontends and GPU engine workers.
 
-    vLLM's RPC engine backend is spawned via multiprocessing and escapes the
-    process group of the frontend that launched it. If a run is interrupted
-    (crash, Ctrl+C, killed parent process) before the normal stop() path runs,
-    the engine worker survives and keeps holding all GPU memory indefinitely.
-    Call this at startup and on any abnormal exit to guarantee a clean GPU.
+    Two sources of stale processes:
+    1. vLLM API server frontends (vllm.entrypoints.openai.api_server) — these are
+       the parent processes that may survive from a previous TUI session. Even if
+       their GPU worker died, the frontend can respawn a new worker and re-occupy
+       the GPU when the next run starts.
+    2. GPU engine workers (pt_main_thread) — spawned via multiprocessing, escape
+       the parent process group, and hold all GPU memory indefinitely after a crash.
     """
+    killed: list[str] = []
+
+    # ── Kill vLLM server frontends ───────────────────────────────────────────
+    try:
+        result = subprocess.run(
+            ["pgrep", "-f", "vllm.entrypoints.openai.api_server"],
+            capture_output=True, text=True,
+        )
+        own_pid = os.getpid()
+        for line in result.stdout.strip().splitlines():
+            try:
+                pid = int(line.strip())
+            except ValueError:
+                continue
+            if pid == own_pid:
+                continue
+            try:
+                os.kill(pid, signal.SIGKILL)
+                killed.append(f"vLLM server PID {pid}")
+            except ProcessLookupError:
+                pass
+    except Exception as e:
+        logger.debug(f"kill_stale_gpu_workers (server sweep): {e}")
+
+    # ── Kill GPU-resident engine workers ─────────────────────────────────────
     try:
         result = subprocess.run(
             ["nvidia-smi", "--query-compute-apps=pid,used_memory",
@@ -435,9 +462,8 @@ def kill_stale_gpu_workers() -> None:
                 mem_mib = int(mem_str)
             except ValueError:
                 continue
-            if mem_mib < 1000:  # ignore tiny processes (Xorg, monitors)
+            if mem_mib < 1000:
                 continue
-            # Verify it's a Python process (not some other GPU user)
             try:
                 with open(f"/proc/{pid}/comm") as f:
                     comm = f.read().strip()
@@ -447,11 +473,14 @@ def kill_stale_gpu_workers() -> None:
                 continue
             try:
                 os.kill(pid, signal.SIGKILL)
-                logger.info(f"Killed GPU worker PID {pid} ({mem_mib} MiB, comm={comm})")
+                killed.append(f"GPU worker PID {pid} ({mem_mib} MiB, comm={comm})")
             except ProcessLookupError:
                 pass
     except Exception as e:
-        logger.debug(f"kill_stale_gpu_workers: {e}")
+        logger.debug(f"kill_stale_gpu_workers (GPU sweep): {e}")
+
+    for entry in killed:
+        logger.info(f"Killed stale {entry}")
 
 
 async def get_vllm_metrics(instance: VLLMInstance) -> dict:

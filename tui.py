@@ -255,12 +255,13 @@ def ask_workloads() -> tuple[list[str], list[str]]:
     return selected_wl, selected_rates
 
 
+_SEQS_DEFAULT = "default"
 MAX_NUM_SEQS_OPTIONS = [
-    ("default", None),
-    ("16  — low parallelism",   16),
-    ("32  — medium",            32),
-    ("64  — high parallelism",  64),
-    ("128 — very high",        128),
+    ("default (strategy built-in)", _SEQS_DEFAULT),
+    ("16  — low parallelism",       16),
+    ("32  — medium",                32),
+    ("64  — high parallelism",      64),
+    ("128 — very high",            128),
 ]
 
 def ask_max_num_seqs() -> list[int | None]:
@@ -279,7 +280,8 @@ def ask_max_num_seqs() -> list[int | None]:
         choices=choices,
         style=STYLE,
     ).ask() or []
-    return selected if selected else [None]   # default if none picked
+    # Convert sentinel string back to None
+    return [None if v == _SEQS_DEFAULT else v for v in selected] if selected else [None]
 
 
 def ask_gpus() -> str:
@@ -392,7 +394,7 @@ def confirm_and_run(
         label = strat if seqs is None else f"{strat} [max_num_seqs={seqs}]"
         console.rule(f"[cyan]{i}/{n_total} — {label}[/cyan]")
         cmd = base_cmd + ["--strategy", strat]
-        if seqs is not None:
+        if seqs is not None and seqs != "default":
             cmd += ["--max-num-seqs-override", str(seqs)]
         console.print(f"[dim]Command: {' '.join(cmd)}[/dim]\n")
         ret = subprocess.run(cmd)
