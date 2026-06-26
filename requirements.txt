@@ -2,7 +2,9 @@
 aiohttp>=3.9.0,<4.0.0
 
 # ── Data processing ────────────────────────────────────────────────────────
-numpy>=1.26.0
+# numpy MUST stay <2.0: vLLM 0.6.0 / torch 2.4.0 are numpy-1.x only. A numpy>=2
+# install drags in scipy/transformers that crash vLLM's import (np.long removed).
+numpy>=1.26.0,<2.0
 pandas>=2.2.0
 
 # ── Cost model fitting ─────────────────────────────────────────────────────
@@ -16,6 +18,20 @@ seaborn>=0.13.0
 pynvml>=11.5.0          # preferred: direct NVML bindings
 # nvidia-ml-py>=12.0.0  # alternative name on some systems (same package)
 
-# ── vLLM (install separately — version must match your CUDA driver) ────────
-# pip install vllm>=0.4.0
-# See: https://docs.vllm.ai/en/latest/getting_started/installation.html
+# ── vLLM stack (VERSION-LOCKED — this codebase's CLI flags target 0.6.0) ───
+# The launcher emits flags removed in later vLLM (--guided-decoding-backend,
+# --disable-log-requests, --use-v2-block-manager, --speculative-model, ...),
+# so vLLM and its torch/transformers chain are pinned. vllm==0.6.0 pulls
+# torch 2.4.0+cu121 (good V100/Volta support). Install with:
+#   pip install -r requirements.txt
+# If your CUDA needs a different torch build, see:
+#   https://docs.vllm.ai/en/latest/getting_started/installation.html
+vllm==0.6.0
+torch==2.4.0
+torchvision==0.19.0
+transformers==4.45.2
+tokenizers==0.20.3
+scipy==1.13.1
+
+questionary
+rich
