@@ -1,0 +1,25 @@
+\begin{table}
+\caption{Mechanistic and efficiency metrics: SLO attainment (TTFT-based), queueing delay, inter-token latency, preemption count, energy per output token, and output completion ratio.}
+\label{tab:efficiency}
+\begin{tabular}{lllllll}
+\toprule
+Strategy & SLO Attain. (\%) & Queue Delay P50 (ms) & ITL Mean (ms) & Preemptions & Energy/Token (J) & Completion Ratio \\
+\midrule
+baseline\_full\_fp16\_tp1 & 66.8 & 0 & 39.5 & 0 & 0.705 & 1.00 \\
+baseline\_full\_fp16\_tp1 & 47.2 & 0 & 79.8 & 0 & 0.468 & 1.00 \\
+baseline\_full\_fp16\_tp1 & 17.0 & 0 & 89.3 & 0 & 0.395 & 1.00 \\
+baseline\_full\_fp16\_tp1 & 18.0 & 0 & 36.3 & 0 & 0.665 & 1.00 \\
+baseline\_full\_fp16\_tp1 & 9.0 & 0 & 89.2 & 1269 & 0.364 & 1.00 \\
+baseline\_full\_fp16\_tp1 & 2.2 & 0 & 87.5 & 4318 & 0.365 & 1.00 \\
+baseline\_full\_fp16\_tp1 & 10.0 & 0 & 64.6 & 0 & 5.039 & 1.00 \\
+baseline\_full\_fp16\_tp1 & 0.0 & 0 & 103.9 & 3564 & 1.410 & 1.00 \\
+baseline\_full\_fp16\_tp1 & 0.0 & 0 & 103.0 & 178 & 1.711 & 1.00 \\
+baseline\_full\_fp16\_tp1 & 0.0 & 0 & 99.5 & 5193 & 1.413 & 1.00 \\
+baseline\_full\_fp16\_tp1 & 0.0 & 0 & 102.5 & 690 & 1.541 & 1.00 \\
+baseline\_full\_fp16\_tp1 & 26.6 & 0 & 74.2 & 0 & 0.296 & 1.00 \\
+baseline\_full\_fp16\_tp1 & 18.2 & 0 & 73.4 & 0 & 0.295 & 1.00 \\
+baseline\_full\_fp16\_tp1 & 2.8 & 0 & 72.1 & 0 & 0.305 & 1.00 \\
+baseline\_full\_fp16\_tp1 & 9.2 & 0 & 43.7 & 0 & 0.348 & 1.00 \\
+\bottomrule
+\end{tabular}
+\end{table}

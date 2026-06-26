@@ -119,10 +119,12 @@ class VLLMLauncher:
         model: str,
         results_dir: str = "results",
         extra_vllm_args: Optional[list[str]] = None,
+        gpu_indices: Optional[list[int]] = None,
     ):
         self.model = model
         self.results_dir = results_dir
         self.extra_vllm_args = extra_vllm_args or []
+        self.gpu_indices = gpu_indices or []
         self._current_instance: Optional[VLLMInstance] = None
 
     def _build_command(self, strategy: Strategy, port: int) -> list[str]:
@@ -150,6 +152,15 @@ class VLLMLauncher:
         # Triton flash attention uses MMA kernels that require Ampere+ (compute 8.0+).
         # V100 is Volta (compute 7.0) — disable to fall back to xformers/standard attention.
         env["VLLM_USE_TRITON_FLASH_ATTN"] = "0"
+
+        # Pin vLLM to the GPU(s) chosen in the TUI/CLI. Without this, CUDA hands the
+        # subprocess physical GPU 0 by default regardless of the selection, so a busy
+        # GPU 0 causes CUDA OOM even when another GPU is free. vLLM sees the exposed
+        # GPUs renumbered from 0, so its tensor-parallel workers map onto exactly the
+        # selected devices. We set this only on the subprocess env (not os.environ),
+        # so the parent's diagnostics and the NVML monitor keep physical indexing.
+        if self.gpu_indices:
+            env["CUDA_VISIBLE_DEVICES"] = ",".join(str(i) for i in self.gpu_indices)
 
         if strategy.tensor_parallel_size > 1:
             # Multi-GPU TP workers run on this same host and rendezvous via Gloo/NCCL.

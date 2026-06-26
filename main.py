@@ -146,6 +146,7 @@ async def run(args):
         model=args.model,
         results_dir=store.run_dir_path(),
         extra_vllm_args=args.extra_vllm_args,
+        gpu_indices=gpu_indices,
     )
 
     logger.info(f"Run ID: {run_id}")
