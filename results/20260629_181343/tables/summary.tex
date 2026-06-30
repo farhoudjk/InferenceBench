@@ -1,0 +1,25 @@
+\begin{table}
+\caption{Benchmark summary: latency (ms) and throughput (tokens/s) per strategy.}
+\label{tab:summary}
+\begin{tabular}{lrrrrrr}
+\toprule
+Strategy & TTFT P50 & TTFT P95 & E2E P50 & E2E P95 & TPS & N \\
+\midrule
+baseline_full_fp16_tp1 & 197 & 550 & 9671 & 21429 & 14.1 & 500 \\
+baseline_full_fp16_tp1 & 626 & 970 & 12031 & 24320 & 11.8 & 500 \\
+baseline_full_fp16_tp1 & 476 & 776 & 4554 & 9704 & 30.0 & 500 \\
+baseline_full_fp16_tp1 & 348 & 1285 & 47405 & 95787 & 11.4 & 500 \\
+baseline_full_fp16_tp1 & 1576 & 2098 & 47052 & 94546 & 11.6 & 500 \\
+baseline_full_fp16_tp1 & 3218 & 4593 & 46670 & 93972 & 12.2 & 500 \\
+baseline_full_fp16_tp1 & 623 & 1601 & 46887 & 94641 & 11.6 & 500 \\
+baseline_full_fp16_tp1 & 76951 & 90007 & 101178 & 154335 & 8.9 & 176 \\
+baseline_full_fp16_tp1 & 75234 & 91330 & 90497 & 143206 & 9.2 & 105 \\
+baseline_full_fp16_tp1 & 79659 & 92035 & 109130 & 157171 & 8.9 & 500 \\
+baseline_full_fp16_tp1 & 78981 & 91876 & 107376 & 155364 & 9.2 & 500 \\
+baseline_full_fp16_tp1 & 256 & 478 & 38728 & 77253 & 13.9 & 500 \\
+baseline_full_fp16_tp1 & 288 & 648 & 38496 & 76738 & 13.9 & 500 \\
+baseline_full_fp16_tp1 & 1019 & 1651 & 37922 & 75239 & 14.3 & 500 \\
+baseline_full_fp16_tp1 & 597 & 855 & 21515 & 42179 & 25.0 & 500 \\
+\bottomrule
+\end{tabular}
+\end{table}
