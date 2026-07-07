@@ -1,26 +1,35 @@
 # ── Core async HTTP (request sending + SSE streaming) ─────────────────────
-aiohttp>=3.9.0,<4.0.0
+aiohttp>=3.14.0,<4.0.0
+
+# ── Interactive TUI (tui.py) ────────────────────────────────────────────────
+questionary>=2.1.0
+rich>=15.0.0
 
 # ── Data processing ────────────────────────────────────────────────────────
-numpy>=1.26.0
-pandas>=2.2.0
+numpy>=1.26.0,<2.0.0
+pandas>=3.0.0
 
 # ── Real-data workloads (config/workloads.py: ShareGPT, CNN/DailyMail,
-#    GSM8K, MBPP) — dataset download + tokenizer for accurate token counts ──
-huggingface_hub>=0.24.0
-transformers>=4.40.0
+#    OpenMathReasoning, MBPP) — dataset download + tokenizer for accurate
+#    token counts ─────────────────────────────────────────────────────────
+huggingface_hub>=0.36.0
+transformers>=4.45.0
 
 # ── Cost model fitting ─────────────────────────────────────────────────────
-scikit-learn>=1.4.0
+scikit-learn>=1.9.0
 
 # ── Visualization ──────────────────────────────────────────────────────────
-matplotlib>=3.8.0
+matplotlib>=3.11.0
 seaborn>=0.13.0
 
 # ── GPU monitoring ─────────────────────────────────────────────────────────
-pynvml>=11.5.0          # preferred: direct NVML bindings
+pynvml>=13.0.0           # preferred: direct NVML bindings
 # nvidia-ml-py>=12.0.0  # alternative name on some systems (same package)
 
-# ── vLLM (install separately — version must match your CUDA driver) ────────
-# pip install vllm>=0.4.0
-# See: https://docs.vllm.ai/en/latest/getting_started/installation.html
+# ── vLLM + torch (versions are coupled and must match your CUDA driver —
+#    if installing on a different machine/CUDA version, install these two
+#    manually instead per https://docs.vllm.ai/en/latest/getting_started/installation.html.
+#    The torch build below needs the CUDA 12.1 wheel index:
+#    pip install torch==2.4.0+cu121 --extra-index-url https://download.pytorch.org/whl/cu121 ──
+torch==2.4.0+cu121
+vllm==0.6.0
