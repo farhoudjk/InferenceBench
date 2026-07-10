@@ -91,6 +91,12 @@ class VLLMInstance:
     process: Optional[subprocess.Popen] = None
     base_url: str = ""
     startup_time_s: float = 0.0
+    log_path: str = ""
+    # KV-cache capacity in tokens (how much decode state the GPU can hold at once).
+    # Used by the load guardrail to warn when offered concurrency exceeds what the
+    # card can actually run, which otherwise shows up as huge TTFT from queueing.
+    kv_token_capacity: int = 0
+    kv_capacity_source: str = "unavailable"
 
     def __post_init__(self):
         self.base_url = f"http://localhost:{self.port}"
@@ -119,11 +125,18 @@ class VLLMLauncher:
         model: str,
         results_dir: str = "results",
         extra_vllm_args: Optional[list[str]] = None,
+        gpu_indices: Optional[list[int]] = None,
     ):
         self.model = model
         self.results_dir = results_dir
         self.extra_vllm_args = extra_vllm_args or []
+        self.gpu_indices = gpu_indices or []
         self._current_instance: Optional[VLLMInstance] = None
+        # Incremented per server launch so each config gets its own log file —
+        # otherwise configs sharing a strategy+seqs suffix reuse one log and
+        # overwrite the previous one, destroying the crash trace of any server
+        # that died mid-run.
+        self._launch_seq = 0
 
     # Models whose CUDA graph warmup hangs on V100 (Volta, compute 7.0).
     # These are typically bfloat16-native models vLLM casts to float16, which
@@ -202,10 +215,18 @@ class VLLMLauncher:
         # Include max_num_seqs in the filename so a max_num_seqs sweep (same
         # strategy, different concurrency) doesn't have each run overwrite the
         # previous run's log — only the last sweep value's log would survive.
+        # Also prefix a per-launch sequence number so configs sharing the same
+        # strategy+seqs (different workload/rate) each keep their own log and a
+        # mid-run crash trace is never overwritten by the next config.
+        self._launch_seq += 1
         log_suffix = f"_seqs{strategy.max_num_seqs}" if strategy.max_num_seqs is not None else ""
-        log_path = os.path.join(self.results_dir, f"vllm_{strategy.name}{log_suffix}.log")
+        log_path = os.path.join(
+            self.results_dir,
+            f"vllm_{strategy.name}{log_suffix}_{self._launch_seq:02d}.log",
+        )
         os.makedirs(self.results_dir, exist_ok=True)
 
+        self._last_log_path = log_path
         logger.info(f"Launching vLLM [{strategy.name}] on port {port}")
         logger.info(f"Python:  {sys.executable}")
         logger.info(f"Command: {' '.join(cmd)}")
@@ -215,6 +236,16 @@ class VLLMLauncher:
         # Triton flash attention uses MMA kernels that require Ampere+ (compute 8.0+).
         # V100 is Volta (compute 7.0) — disable to fall back to xformers/standard attention.
         env["VLLM_USE_TRITON_FLASH_ATTN"] = "0"
+
+        # Pin vLLM to the GPU(s) chosen in the TUI/CLI. Without this, CUDA hands the
+        # subprocess physical GPU 0 by default regardless of --gpu-indices, so a busy
+        # GPU 0 causes CUDA OOM even when the chosen GPU is free — and a run can never
+        # actually use GPU 1. vLLM sees the exposed GPUs renumbered from 0, so its
+        # tensor-parallel workers map onto exactly the selected devices. Set only on
+        # the subprocess env (not os.environ), so the parent's diagnostics and the
+        # NVML monitor keep physical indexing.
+        if self.gpu_indices:
+            env["CUDA_VISIBLE_DEVICES"] = ",".join(str(i) for i in self.gpu_indices)
 
         # FlashInfer's top-k/top-p sampler JIT-compiles a CUDA kernel on first use via
         # nvcc + ninja. This host has no system CUDA toolkit (no /usr/local/cuda, no
@@ -378,7 +409,7 @@ class VLLMLauncher:
         _log_system_state(f"before-start:{strategy.name}", port)
         # Evict any stale port-holder or GPU-resident engine worker from a prior run
         self._kill_port_holder(port)
-        self._kill_gpu_workers()
+        self._kill_gpu_workers(port)
         t0 = time.time()
         process = self._launch_process(strategy, port)
         instance = VLLMInstance(strategy=strategy, model=self.model, port=port, process=process)
@@ -392,6 +423,21 @@ class VLLMLauncher:
         if not healthy:
             self.stop(instance)
             raise RuntimeError(f"vLLM instance [{strategy.name}] failed to start.")
+
+        # Record how much KV cache the card actually has, so the runner's load
+        # guardrail can warn when offered concurrency exceeds real capacity.
+        instance.log_path = getattr(self, "_last_log_path", "")
+        cap, source = estimate_kv_capacity(
+            self.model, strategy, self.gpu_indices, log_path=instance.log_path
+        )
+        instance.kv_token_capacity = cap
+        instance.kv_capacity_source = source
+        if cap:
+            logger.info(
+                f"KV cache capacity: ~{cap:,} tokens "
+                f"(~{max(1, cap // max(1, strategy.max_model_len))} sequences at "
+                f"max_model_len={strategy.max_model_len}) — {source}"
+            )
 
         self._current_instance = instance
         return instance
@@ -424,7 +470,7 @@ class VLLMLauncher:
 
         # Step 3: kill any remaining GPU-resident Python processes from this vLLM run
         # (the engine worker spawned via multiprocessing survives killpg on the frontend)
-        self._kill_gpu_workers()
+        self._kill_gpu_workers(port)
 
         target.process = None
         self._current_instance = None
@@ -464,10 +510,13 @@ class VLLMLauncher:
         except Exception as e:
             logger.debug(f"_kill_port_holder({port}): {e}")
 
-    @staticmethod
-    def _kill_gpu_workers() -> None:
-        """Instance-callable wrapper around the module-level cleanup function."""
-        kill_stale_gpu_workers()
+    def _kill_gpu_workers(self, port: int) -> None:
+        """Instance-callable wrapper around the module-level cleanup function.
+
+        Scoped to this launcher's GPU(s) and the given port so it evicts only
+        this run's stale workers — never a concurrent run's server on another GPU.
+        """
+        kill_stale_gpu_workers(gpu_indices=self.gpu_indices, port=port)
 
     async def run_with_strategy(self, strategy: Strategy, coro, port: int = BASE_PORT):
         """
@@ -482,8 +531,109 @@ class VLLMLauncher:
             self.stop(instance)
 
 
-def kill_stale_gpu_workers() -> None:
-    """SIGKILL any stale vLLM processes: both server frontends and GPU engine workers.
+# vLLM's default KV-cache block size (tokens per block). The benchmark never
+# overrides --block-size, so this holds.
+_VLLM_BLOCK_SIZE = 16
+
+
+def _parse_gpu_blocks_from_log(log_path: str) -> Optional[int]:
+    """Extract vLLM's profiled '# GPU blocks: N' from its startup log.
+
+    This is ground truth: vLLM measures free memory after loading weights and
+    profiling peak activation, then reports how many KV blocks fit. Returns the
+    last such count (there may be one per engine), or None if not present.
+    """
+    if not log_path:
+        return None
+    try:
+        with open(log_path, "r", errors="ignore") as f:
+            text = f.read()
+    except OSError:
+        return None
+    matches = re.findall(r"GPU blocks:\s*(\d+)", text)
+    return int(matches[-1]) if matches else None
+
+
+def _estimate_param_bytes(cfg, dtype_bytes: float = 2.0) -> int:
+    """Rough transformer weight footprint from an HF config (norms/biases ignored)."""
+    V = getattr(cfg, "vocab_size", 32000)
+    H = cfg.hidden_size
+    L = cfg.num_hidden_layers
+    I = getattr(cfg, "intermediate_size", 4 * H)
+    n_heads = cfg.num_attention_heads
+    n_kv = getattr(cfg, "num_key_value_heads", None) or n_heads
+    hd = getattr(cfg, "head_dim", None) or (H // n_heads)
+    embed = V * H
+    attn = 2 * H * n_heads * hd + 2 * H * n_kv * hd   # (q+o) + (k+v), GQA-aware
+    mlp = 3 * H * I                                    # gate + up + down
+    params = embed + L * (attn + mlp)
+    if not getattr(cfg, "tie_word_embeddings", True):
+        params += V * H
+    return int(params * dtype_bytes)
+
+
+def _kv_bytes_per_token(cfg) -> int:
+    """KV-cache bytes for one token across all layers (fp16/bf16 KV = 2 bytes)."""
+    H = cfg.hidden_size
+    n_heads = cfg.num_attention_heads
+    n_kv = getattr(cfg, "num_key_value_heads", None) or n_heads
+    hd = getattr(cfg, "head_dim", None) or (H // n_heads)
+    L = cfg.num_hidden_layers
+    return 2 * L * n_kv * hd * 2   # 2 (K+V) × layers × kv_heads × head_dim × 2 bytes
+
+
+def estimate_kv_capacity(model, strategy, gpu_indices, log_path=None):
+    """Return (kv_token_capacity, source). Prefer vLLM's profiled GPU-block count;
+    fall back to a model-config + GPU-memory estimate if the log line is absent."""
+    blocks = _parse_gpu_blocks_from_log(log_path)
+    if blocks:
+        return blocks * _VLLM_BLOCK_SIZE, f"vLLM profiled ({blocks} GPU blocks × {_VLLM_BLOCK_SIZE})"
+    try:
+        from transformers import AutoConfig
+        import torch
+        cfg = AutoConfig.from_pretrained(model)
+        # weight dtype: fp8 ≈ 1 B/param, AWQ/GPTQ 4-bit ≈ 0.5, else fp16 = 2.
+        q = (strategy.quantization or "").lower()
+        wbytes = 1.0 if "fp8" in q else (0.5 if q in ("awq", "gptq") else 2.0)
+        weight_bytes = _estimate_param_bytes(cfg, dtype_bytes=wbytes)
+        idx = gpu_indices[0] if gpu_indices else 0
+        total_mem = torch.cuda.get_device_properties(idx).total_memory
+        tp = max(1, strategy.tensor_parallel_size)
+        util = strategy.gpu_memory_utilization or 0.9
+        overhead = int(1.5 * 1024 ** 3)   # activations + CUDA graphs + fragmentation
+        kv_budget = max(0, int(total_mem * tp * util) - weight_bytes - overhead)
+        cap = kv_budget // max(1, _kv_bytes_per_token(cfg))
+        return int(cap), "estimated (config + GPU mem)"
+    except Exception as e:
+        logger.debug(f"KV capacity estimate failed: {e}")
+        return 0, "unavailable"
+
+
+def _proc_cmdline_has_port(pid: int, port: int) -> bool:
+    """True if process `pid` was launched with `--port <port>` (exact match).
+
+    Reads /proc/<pid>/cmdline (NUL-separated argv) so we can tell one run's vLLM
+    frontend from another's by the port it serves. Returns False if unreadable.
+    """
+    try:
+        with open(f"/proc/{pid}/cmdline", "rb") as f:
+            argv = f.read().split(b"\x00")
+    except OSError:
+        return False
+    target = str(port).encode()
+    for i, tok in enumerate(argv):
+        if tok == b"--port=" + target:
+            return True
+        if tok == b"--port" and i + 1 < len(argv) and argv[i + 1] == target:
+            return True
+    return False
+
+
+def kill_stale_gpu_workers(
+    gpu_indices: Optional[list[int]] = None,
+    port: Optional[int] = None,
+) -> None:
+    """SIGKILL stale vLLM processes: both server frontends and GPU engine workers.
 
     Two sources of stale processes:
     1. vLLM API server frontends (vllm.entrypoints.openai.api_server) — these are
@@ -492,6 +642,14 @@ def kill_stale_gpu_workers() -> None:
        the GPU when the next run starts.
     2. GPU engine workers (pt_main_thread) — spawned via multiprocessing, escape
        the parent process group, and hold all GPU memory indefinitely after a crash.
+
+    Scoping (both optional, default = machine-wide sweep):
+    - port: only kill frontends bound to this --port. Without it, a second run
+      starting on another GPU would SIGKILL the first run's still-serving
+      frontend (they all match the api_server pattern).
+    - gpu_indices: only kill GPU workers resident on these physical GPUs. Without
+      it, the nvidia-smi sweep spans every GPU and kills a concurrent run's
+      worker. Passing this run's GPUs makes two runs on separate GPUs coexist.
     """
     killed: list[str] = []
 
@@ -509,6 +667,10 @@ def kill_stale_gpu_workers() -> None:
                 continue
             if pid == own_pid:
                 continue
+            # When scoped to a port, leave frontends bound to any other port
+            # alone — they belong to a different (possibly concurrent) run.
+            if port is not None and not _proc_cmdline_has_port(pid, port):
+                continue
             try:
                 os.kill(pid, signal.SIGKILL)
                 killed.append(f"vLLM server PID {pid}")
@@ -519,11 +681,14 @@ def kill_stale_gpu_workers() -> None:
 
     # ── Kill GPU-resident engine workers ─────────────────────────────────────
     try:
-        result = subprocess.run(
-            ["nvidia-smi", "--query-compute-apps=pid,used_memory",
-             "--format=csv,noheader,nounits"],
-            capture_output=True, text=True,
-        )
+        query_cmd = ["nvidia-smi", "--query-compute-apps=pid,used_memory",
+                     "--format=csv,noheader,nounits"]
+        # Restrict the sweep to this run's physical GPUs so a concurrent run's
+        # worker on another GPU is never touched. nvidia-smi -i uses physical
+        # indexing, matching gpu_indices.
+        if gpu_indices:
+            query_cmd += ["-i", ",".join(str(i) for i in gpu_indices)]
+        result = subprocess.run(query_cmd, capture_output=True, text=True)
         for line in result.stdout.strip().splitlines():
             parts = [x.strip() for x in line.split(",")]
             if len(parts) != 2:

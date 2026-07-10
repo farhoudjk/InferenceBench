@@ -35,7 +35,14 @@ from benchmark.launcher import VLLMLauncher, kill_stale_gpu_workers
 from benchmark.runner import run_benchmark
 from benchmark.storage import ResultStore
 from config.strategies import STRATEGIES, get_strategies_for_dimension
-from config.workloads import ARRIVAL_RATES, ArrivalPattern, BURSTY_LABEL, WORKLOADS, get_workload
+from config.workloads import (
+    ARRIVAL_RATES,
+    ArrivalPattern,
+    BURSTY_LABEL,
+    WORKLOADS,
+    get_workload,
+    set_tokenizer_model,
+)
 
 def _setup_logging(debug: bool = False):
     logging.basicConfig(
@@ -47,6 +54,11 @@ def _setup_logging(debug: bool = False):
         # suppress noisy debug from aiohttp internals
         logging.getLogger("aiohttp").setLevel(logging.WARNING)
 logger = logging.getLogger("benchmark.main")
+
+# Set in __main__ so cleanup handlers stay scoped to this run's GPU(s)/port and
+# never touch a concurrently-running benchmark. Default None = machine-wide sweep.
+_CLEANUP_GPU_INDICES = None
+_CLEANUP_PORT = None
 
 
 def parse_args():
@@ -155,6 +167,12 @@ async def run(args):
             )
             s.max_model_len = args.max_model_len_override
 
+    # Count real-dataset prompt/response lengths with the served model's own
+    # tokenizer so the runner's max_tokens clamp matches what vLLM sees at
+    # runtime (a Llama-counted DeepSeek prompt under-estimates its length and
+    # can push sequences past max_model_len, crashing the engine).
+    set_tokenizer_model(args.model)
+
     workloads = [get_workload(w) for w in workload_names]
     if args.num_requests is not None:
         for wl in workloads:
@@ -178,6 +196,7 @@ async def run(args):
         model=args.model,
         results_dir=store.run_dir_path(),
         extra_vllm_args=args.extra_vllm_args,
+        gpu_indices=gpu_indices,
     )
 
     logger.info(f"Run ID: {run_id}")
@@ -287,8 +306,12 @@ def _cleanup_gpu_on_exit(signum=None, frame=None):
 
     Registered for normal exit (atexit) and SIGINT/SIGTERM (Ctrl+C, kill) so a
     benchmark interrupted mid-run never leaves the GPU occupied for the next one.
+
+    Scoped to this run's GPU(s) and port so it never kills a concurrent run's
+    vLLM server on another GPU (e.g. Llama on GPU 0 / port 8100 alongside
+    DeepSeek on GPU 1 / port 8101).
     """
-    kill_stale_gpu_workers()
+    kill_stale_gpu_workers(gpu_indices=_CLEANUP_GPU_INDICES, port=_CLEANUP_PORT)
     if signum is not None:
         sys.exit(128 + signum)
 
@@ -297,9 +320,14 @@ if __name__ == "__main__":
     args = parse_args()
     _setup_logging(debug=getattr(args, "debug", False))
 
+    # Remember this run's GPU(s) and port so every cleanup path stays scoped to
+    # them and leaves any concurrently-running benchmark's processes untouched.
+    _CLEANUP_GPU_INDICES = [int(x) for x in args.gpu_indices.split(",")]
+    _CLEANUP_PORT = args.port
+
     # Clear out any orphaned GPU workers from a previous crashed/killed run
     # before we even try to start, then guarantee cleanup on every exit path.
-    kill_stale_gpu_workers()
+    kill_stale_gpu_workers(gpu_indices=_CLEANUP_GPU_INDICES, port=_CLEANUP_PORT)
     atexit.register(_cleanup_gpu_on_exit)
     signal.signal(signal.SIGINT, _cleanup_gpu_on_exit)
     signal.signal(signal.SIGTERM, _cleanup_gpu_on_exit)

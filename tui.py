@@ -404,7 +404,11 @@ def confirm_and_run(
         console.print("[dim]Cancelled.[/dim]")
         return
 
-    kill_stale_gpu_workers()
+    # Scope pre-launch cleanup to the selected GPU(s)/port so it never kills a
+    # benchmark already running on the other GPU.
+    _gpu_sel = [int(x) for x in str(opts["gpu"]).split(",") if x.strip() != ""]
+    _port_sel = int(opts["port"]) if str(opts["port"]).strip().isdigit() else None
+    kill_stale_gpu_workers(gpu_indices=_gpu_sel, port=_port_sel)
 
     python = sys.executable
     run_id = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -441,9 +445,26 @@ def confirm_and_run(
         if seqs is not None and seqs != "default":
             cmd += ["--max-num-seqs-override", str(seqs)]
         console.print(f"[dim]Command: {' '.join(cmd)}[/dim]\n")
-        ret = subprocess.run(cmd)
-        if ret.returncode != 0:
-            console.print(f"[red]Run {label} failed (returncode={ret.returncode}). Continuing...[/red]")
+        # Run as a child in this same process group so Ctrl+C reaches main.py
+        # too and it runs its own scoped GPU cleanup. On interrupt we wait for
+        # that cleanup to finish (escalating if it hangs), then stop the TUI
+        # cleanly instead of dumping a KeyboardInterrupt traceback.
+        proc = subprocess.Popen(cmd)
+        try:
+            returncode = proc.wait()
+        except KeyboardInterrupt:
+            console.print("\n[yellow]Interrupted — stopping run and cleaning up GPU ...[/yellow]")
+            try:
+                proc.wait(timeout=30)
+            except subprocess.TimeoutExpired:
+                proc.terminate()
+                try:
+                    proc.wait(timeout=10)
+                except subprocess.TimeoutExpired:
+                    proc.kill()
+            raise
+        if returncode != 0:
+            console.print(f"[red]Run {label} failed (returncode={returncode}). Continuing...[/red]")
 
     console.print()
     console.print("[bold green]✓ Benchmark finished.[/bold green]")
@@ -481,4 +502,8 @@ def main():
 
 if __name__ == "__main__":
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        console.print("\n[dim]Cancelled by user.[/dim]")
+        sys.exit(130)

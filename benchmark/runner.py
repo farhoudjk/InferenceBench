@@ -170,9 +170,13 @@ async def _send_request(
     # Clamp max_tokens so prompt + completion never exceeds the server's
     # max_model_len — real-dataset workloads (e.g. OpenMathReasoning CoT
     # traces) can have reference output lengths that alone exceed the
-    # context window. A margin absorbs the vLLM tokenizer occasionally
-    # counting a few more prompt tokens than our local estimate.
-    context_margin = 16
+    # context window. The margin keeps sequences clear of the exact
+    # max_model_len boundary: landing on it trips vLLM 0.6.x's
+    # `assert num_new_tokens > 0` in the scheduler, which kills the whole
+    # engine (AsyncEngineDeadError) and fails every remaining request. It also
+    # absorbs residual drift between our token count and the server's (special
+    # tokens, chat-template wrapping, tokenizer edge cases).
+    context_margin = 256
     max_completion_tokens = instance.strategy.max_model_len - req.prompt_token_len - context_margin
     if max_completion_tokens < 1:
         # Prompt alone already fills (or nearly fills) the context window —
@@ -220,7 +224,11 @@ async def _send_request(
             timeout=aiohttp.ClientTimeout(
                 total=timeout_s,
                 sock_connect=10,   # fail fast if vLLM not accepting connections
-                sock_read=120,     # fail if no SSE chunk arrives within 120s
+                # No SSE chunk for this long → dead stream. Must be ≥ ttft_timeout_s,
+                # otherwise this hardcoded socket read silently caps a larger
+                # --ttft-timeout (a queued request gets no bytes until its first
+                # token, so the gap before token 1 is bounded by ttft_timeout_s).
+                sock_read=max(120.0, ttft_timeout_s),
             ),
         ) as resp:
             logger.debug(f"[{req.request_id}] HTTP {resp.status} received")
@@ -334,6 +342,44 @@ async def _send_request(
 
 # ── Trace replayer ────────────────────────────────────────────────────────────
 
+def _warn_if_overloaded(
+    instance: VLLMInstance,
+    max_concurrent: int,
+    target_rps: Optional[float],
+) -> None:
+    """Warn when offered concurrency exceeds what the GPU can run — but do NOT cap.
+
+    max_concurrent is a controlled experimental variable: it must be held constant
+    across strategies for the strategy comparison (RQ1/RQ5) to be valid, so this
+    only surfaces the capacity for context and never changes the run. High TTFT
+    under high offered concurrency is a *result* (how the strategy degrades under
+    load), not a failure to be papered over. To avoid biasing the tail, keep the
+    ttft/request timeouts high enough that slow requests complete rather than being
+    dropped.
+    """
+    cap = getattr(instance, "kv_token_capacity", 0)
+    if not cap:
+        return
+    max_model_len = instance.strategy.max_model_len
+    fit_full = max(1, cap // max_model_len)
+    source = getattr(instance, "kv_capacity_source", "")
+    if max_concurrent <= fit_full:
+        logger.info(
+            "Load headroom OK: max_concurrent=%d ≤ ~%d full-context KV slots (%s).",
+            max_concurrent, fit_full, source,
+        )
+        return
+    logger.warning(
+        "⚠️  LOAD NOTE — offered concurrency exceeds full-context GPU capacity:\n"
+        "    max_concurrent=%d vs ~%d sequences the KV cache holds at full context\n"
+        "    (%s: ~%d tokens ÷ max_model_len %d, target_rps=%s).\n"
+        "    Expect elevated TTFT from vLLM-side queueing — this is real load data, "
+        "not an error. Keep ttft/request timeouts high so slow requests aren't "
+        "dropped (dropping them biases P95/P99).",
+        max_concurrent, fit_full, source, cap, max_model_len, target_rps,
+    )
+
+
 async def run_benchmark(
     instance: VLLMInstance,
     workload_config: WorkloadConfig,
@@ -375,6 +421,9 @@ async def run_benchmark(
     gpu_result = gpu_monitor.start(strategy.name) if gpu_monitor else None
 
     n_total = len(trace)
+    # Surface GPU capacity vs offered concurrency for context, but never change
+    # max_concurrent — it is a controlled variable held constant across strategies.
+    _warn_if_overloaded(instance, max_concurrent, target_rps)
     logger.info(f"Starting benchmark: {n_total} requests, max_concurrent={max_concurrent}")
 
     semaphore = asyncio.Semaphore(max_concurrent)

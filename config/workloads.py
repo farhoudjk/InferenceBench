@@ -27,7 +27,36 @@ logger = logging.getLogger(__name__)
 
 # Tokenizer used to measure real-dataset prompts/responses accurately (the
 # synthetic path below uses a word-count heuristic instead, see _make_prompt).
+# This is only a fallback: main.py calls set_tokenizer_model(args.model) before
+# building workloads so lengths are counted with the *served* model's tokenizer.
+# Counting a DeepSeek/Qwen prompt with a Llama tokenizer under-estimates its real
+# length, so the max_tokens clamp in runner.py lets sequences overshoot
+# max_model_len and trip vLLM 0.6.x's `assert num_new_tokens > 0`, killing the
+# engine for the rest of the run.
 TOKENIZER_MODEL_ID = "meta-llama/Llama-3.1-8B-Instruct"
+_tokenizer_model_id = TOKENIZER_MODEL_ID
+
+
+def set_tokenizer_model(model_id: str) -> None:
+    """Point token counting at the served model's tokenizer (call before build).
+
+    Real-dataset prompt/response lengths must be measured with the same tokenizer
+    the vLLM server uses, otherwise the runner's context clamp is computed against
+    the wrong vocabulary and sequences can exceed max_model_len at runtime.
+    """
+    global _tokenizer_model_id
+    if model_id and model_id != _tokenizer_model_id:
+        _tokenizer_model_id = model_id
+        # Drop the cached tokenizer and any dataset pairs whose token lengths
+        # were measured with the previous tokenizer.
+        _get_tokenizer.cache_clear()
+        for loader in (
+            _load_sharegpt_pairs,
+            _load_cnn_dailymail_pairs,
+            _load_openmath_reasoning_pairs,
+            _load_mbpp_pairs,
+        ):
+            loader.cache_clear()
 
 
 class TaskType(str, Enum):
@@ -173,7 +202,7 @@ def _make_prompt(task_type: TaskType, prompt_length_tokens: int) -> str:
 @functools.lru_cache(maxsize=1)
 def _get_tokenizer():
     from transformers import AutoTokenizer
-    return AutoTokenizer.from_pretrained(TOKENIZER_MODEL_ID)
+    return AutoTokenizer.from_pretrained(_tokenizer_model_id)
 
 
 def _count_tokens(text: str) -> int:
