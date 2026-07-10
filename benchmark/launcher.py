@@ -119,10 +119,15 @@ class VLLMLauncher:
         model: str,
         results_dir: str = "results",
         extra_vllm_args: Optional[list[str]] = None,
+        gpu_indices: Optional[list[int]] = None,
     ):
         self.model = model
         self.results_dir = results_dir
         self.extra_vllm_args = extra_vllm_args or []
+        # Physical GPU(s) this launcher owns. Pins the vLLM subprocess to them via
+        # CUDA_VISIBLE_DEVICES and scopes stale-process cleanup, so a second job on
+        # another GPU can run in parallel without the two clobbering each other.
+        self.gpu_indices = gpu_indices if gpu_indices is not None else [0]
         self._current_instance: Optional[VLLMInstance] = None
 
     # Models whose CUDA graph warmup hangs on V100 (Volta, compute 7.0).
@@ -174,6 +179,37 @@ class VLLMLauncher:
                 f"Use an unquantized or fp8/gptq checkpoint instead."
             )
 
+    # Chunked prefill's prefix-attention path (PagedAttention.forward_prefix →
+    # context_attention_fwd, a Triton kernel in vllm/attention/ops/prefix_prefill.py)
+    # emits MMA→MMA layout conversions that Triton only codegens for Ampere+
+    # (compute capability >= 8.0). On Volta (V100, 7.0) the server boots fine but the
+    # first chunked forward pass aborts the worker with
+    # "mma -> mma layout conversion is only supported on Ampere". The XFormers
+    # fallback only covers pure-prefill/pure-decode; any chunked step with a cached
+    # prefix goes through the Triton kernel regardless, so there is no config escape.
+    _CHUNKED_PREFILL_MIN_COMPUTE_CAPABILITY = (8, 0)
+
+    def _check_chunked_prefill_support(self, strategy: Strategy) -> None:
+        if not strategy.enable_chunked_prefill:
+            return
+        import torch
+        if not torch.cuda.is_available():
+            return
+        major, minor = torch.cuda.get_device_capability(0)
+        if (major, minor) < self._CHUNKED_PREFILL_MIN_COMPUTE_CAPABILITY:
+            gpu_name = torch.cuda.get_device_properties(0).name
+            raise RuntimeError(
+                f"Strategy '{strategy.name}' enables chunked prefill, whose prefix-attention "
+                f"Triton kernel needs GPU compute capability >= "
+                f"{self._CHUNKED_PREFILL_MIN_COMPUTE_CAPABILITY[0]}."
+                f"{self._CHUNKED_PREFILL_MIN_COMPUTE_CAPABILITY[1]} (Ampere or newer). "
+                f"This GPU ({gpu_name}) is compute {major}.{minor}; the server would start but "
+                f"the first chunked forward pass aborts with an 'mma -> mma layout conversion is "
+                f"only supported on Ampere' Triton assertion. This is a hardware limitation, not "
+                f"fixable via configuration. Skip the chunked_* strategies (and the chunked_prefill "
+                f"dimension) on this host, or run them on an Ampere+ GPU."
+            )
+
     def _build_command(self, strategy: Strategy, port: int) -> list[str]:
         native_limit = self._native_max_model_len()
         if native_limit is not None and strategy.max_model_len > native_limit:
@@ -212,6 +248,13 @@ class VLLMLauncher:
         logger.info(f"Log:     {log_path}")
 
         env = os.environ.copy()
+        # Pin this vLLM instance to its assigned physical GPU(s). vLLM otherwise
+        # defaults to GPU 0 regardless of --gpu-indices (which only feeds logging
+        # and the TP-count guard), so without this two parallel jobs both land on
+        # GPU 0 and OOM. CUDA_VISIBLE_DEVICES also renumbers devices to 0..N-1
+        # inside the process, so TP still sees a contiguous device list.
+        env["CUDA_VISIBLE_DEVICES"] = ",".join(str(i) for i in self.gpu_indices)
+
         # Triton flash attention uses MMA kernels that require Ampere+ (compute 8.0+).
         # V100 is Volta (compute 7.0) — disable to fall back to xformers/standard attention.
         env["VLLM_USE_TRITON_FLASH_ATTN"] = "0"
@@ -375,10 +418,11 @@ class VLLMLauncher:
     async def start(self, strategy: Strategy, port: int = BASE_PORT) -> VLLMInstance:
         """Launch vLLM for the given strategy and wait until healthy."""
         self._check_quantization_support(strategy)
+        self._check_chunked_prefill_support(strategy)
         _log_system_state(f"before-start:{strategy.name}", port)
         # Evict any stale port-holder or GPU-resident engine worker from a prior run
         self._kill_port_holder(port)
-        self._kill_gpu_workers()
+        self._kill_gpu_workers(port)
         t0 = time.time()
         process = self._launch_process(strategy, port)
         instance = VLLMInstance(strategy=strategy, model=self.model, port=port, process=process)
@@ -424,7 +468,7 @@ class VLLMLauncher:
 
         # Step 3: kill any remaining GPU-resident Python processes from this vLLM run
         # (the engine worker spawned via multiprocessing survives killpg on the frontend)
-        self._kill_gpu_workers()
+        self._kill_gpu_workers(port)
 
         target.process = None
         self._current_instance = None
@@ -464,10 +508,11 @@ class VLLMLauncher:
         except Exception as e:
             logger.debug(f"_kill_port_holder({port}): {e}")
 
-    @staticmethod
-    def _kill_gpu_workers() -> None:
-        """Instance-callable wrapper around the module-level cleanup function."""
-        kill_stale_gpu_workers()
+    def _kill_gpu_workers(self, port: int) -> None:
+        """Instance-callable wrapper around the module-level cleanup function,
+        scoped to this launcher's GPU(s) and the port being (re)started so a
+        sibling parallel job on another GPU/port is never swept away."""
+        kill_stale_gpu_workers(gpu_indices=self.gpu_indices, ports=[port])
 
     async def run_with_strategy(self, strategy: Strategy, coro, port: int = BASE_PORT):
         """
@@ -482,8 +527,57 @@ class VLLMLauncher:
             self.stop(instance)
 
 
-def kill_stale_gpu_workers() -> None:
-    """SIGKILL any stale vLLM processes: both server frontends and GPU engine workers.
+def _proc_matches_port(pid: int, port_set: set[int]) -> bool:
+    """True if process `pid`'s command line contains `--port <p>` for some p in
+    `port_set`. Used to scope the frontend sweep to this job's own server(s)."""
+    try:
+        with open(f"/proc/{pid}/cmdline", "rb") as f:
+            argv = f.read().split(b"\x00")
+    except OSError:
+        return False
+    for i, tok in enumerate(argv):
+        if tok == b"--port" and i + 1 < len(argv):
+            try:
+                if int(argv[i + 1]) in port_set:
+                    return True
+            except ValueError:
+                pass
+    return False
+
+
+def _gpu_uuids_for_indices(gpu_indices: list[int]) -> set[str]:
+    """Map physical GPU indices → their UUIDs (as reported by nvidia-smi).
+
+    Needed because nvidia-smi's compute-app listing identifies a process's GPU by
+    UUID, not index. Returns an empty set if the mapping can't be built (caller
+    treats that as "can't scope safely" and skips the GPU sweep).
+    """
+    uuids: set[str] = set()
+    try:
+        result = subprocess.run(
+            ["nvidia-smi", "--query-gpu=index,uuid", "--format=csv,noheader"],
+            capture_output=True, text=True,
+        )
+        for line in result.stdout.strip().splitlines():
+            parts = [x.strip() for x in line.split(",")]
+            if len(parts) != 2:
+                continue
+            try:
+                idx = int(parts[0])
+            except ValueError:
+                continue
+            if idx in gpu_indices:
+                uuids.add(parts[1])
+    except Exception as e:
+        logger.debug(f"_gpu_uuids_for_indices: {e}")
+    return uuids
+
+
+def kill_stale_gpu_workers(
+    gpu_indices: Optional[list[int]] = None,
+    ports: Optional[list[int]] = None,
+) -> None:
+    """SIGKILL stale vLLM processes: both server frontends and GPU engine workers.
 
     Two sources of stale processes:
     1. vLLM API server frontends (vllm.entrypoints.openai.api_server) — these are
@@ -492,8 +586,16 @@ def kill_stale_gpu_workers() -> None:
        the GPU when the next run starts.
     2. GPU engine workers (pt_main_thread) — spawned via multiprocessing, escape
        the parent process group, and hold all GPU memory indefinitely after a crash.
+
+    Scoping (for running two jobs in parallel, one model per GPU): when `ports`
+    and/or `gpu_indices` are given, only processes belonging to THIS job are
+    swept — frontends are matched by their `--port`, GPU workers by the physical
+    GPU they occupy — so a sibling job's live server on another port/GPU is never
+    mistaken for a stale leftover and killed. With both None the sweep is
+    machine-global (single-job / legacy behaviour).
     """
     killed: list[str] = []
+    port_set = set(ports) if ports else None
 
     # ── Kill vLLM server frontends ───────────────────────────────────────────
     try:
@@ -509,6 +611,10 @@ def kill_stale_gpu_workers() -> None:
                 continue
             if pid == own_pid:
                 continue
+            # When port-scoped, only kill the frontend bound to one of our ports;
+            # a sibling job's server (different --port) must survive.
+            if port_set is not None and not _proc_matches_port(pid, port_set):
+                continue
             try:
                 os.kill(pid, signal.SIGKILL)
                 killed.append(f"vLLM server PID {pid}")
@@ -518,21 +624,35 @@ def kill_stale_gpu_workers() -> None:
         logger.debug(f"kill_stale_gpu_workers (server sweep): {e}")
 
     # ── Kill GPU-resident engine workers ─────────────────────────────────────
+    # When gpu-scoped, restrict to workers resident on THIS job's physical GPU(s)
+    # so a sibling job's workers on another GPU are left alone. If we can't build
+    # the index→UUID map, skip the GPU sweep entirely rather than risk killing the
+    # sibling (the port-scoped frontend sweep above already covers our own leftovers).
+    target_uuids: Optional[set[str]] = None
+    if gpu_indices is not None:
+        target_uuids = _gpu_uuids_for_indices(gpu_indices)
+        if not target_uuids:
+            logger.debug("kill_stale_gpu_workers: no UUID map; skipping GPU sweep")
+            for entry in killed:
+                logger.info(f"Killed stale {entry}")
+            return
     try:
         result = subprocess.run(
-            ["nvidia-smi", "--query-compute-apps=pid,used_memory",
+            ["nvidia-smi", "--query-compute-apps=gpu_uuid,pid,used_memory",
              "--format=csv,noheader,nounits"],
             capture_output=True, text=True,
         )
         for line in result.stdout.strip().splitlines():
             parts = [x.strip() for x in line.split(",")]
-            if len(parts) != 2:
+            if len(parts) != 3:
                 continue
-            pid_str, mem_str = parts
+            uuid_str, pid_str, mem_str = parts
             try:
                 pid = int(pid_str)
                 mem_mib = int(mem_str)
             except ValueError:
+                continue
+            if target_uuids is not None and uuid_str not in target_uuids:
                 continue
             if mem_mib < 1000:
                 continue

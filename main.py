@@ -178,6 +178,7 @@ async def run(args):
         model=args.model,
         results_dir=store.run_dir_path(),
         extra_vllm_args=args.extra_vllm_args,
+        gpu_indices=gpu_indices,
     )
 
     logger.info(f"Run ID: {run_id}")
@@ -282,13 +283,20 @@ async def report_only(args):
     print(f"✓ Report generated in: {run_dir}")
 
 
+# GPU/port scope for stale-process cleanup, set once args are parsed. Keeps the
+# atexit/signal cleanup from sweeping a sibling parallel job on another GPU.
+_CLEANUP_GPU_INDICES: list[int] | None = None
+_CLEANUP_PORTS: list[int] | None = None
+
+
 def _cleanup_gpu_on_exit(signum=None, frame=None):
     """Kill any stale vLLM GPU workers left over from this or a prior crashed run.
 
     Registered for normal exit (atexit) and SIGINT/SIGTERM (Ctrl+C, kill) so a
     benchmark interrupted mid-run never leaves the GPU occupied for the next one.
+    Scoped to this job's own GPU(s)/port so a parallel sibling job is untouched.
     """
-    kill_stale_gpu_workers()
+    kill_stale_gpu_workers(gpu_indices=_CLEANUP_GPU_INDICES, ports=_CLEANUP_PORTS)
     if signum is not None:
         sys.exit(128 + signum)
 
@@ -297,9 +305,14 @@ if __name__ == "__main__":
     args = parse_args()
     _setup_logging(debug=getattr(args, "debug", False))
 
+    # Scope all stale-process cleanup to this job's GPU(s)/port so two jobs (one
+    # model per GPU) can run in parallel without killing each other's servers.
+    _CLEANUP_GPU_INDICES = [int(x) for x in args.gpu_indices.split(",")]
+    _CLEANUP_PORTS = [args.port]
+
     # Clear out any orphaned GPU workers from a previous crashed/killed run
     # before we even try to start, then guarantee cleanup on every exit path.
-    kill_stale_gpu_workers()
+    kill_stale_gpu_workers(gpu_indices=_CLEANUP_GPU_INDICES, ports=_CLEANUP_PORTS)
     atexit.register(_cleanup_gpu_on_exit)
     signal.signal(signal.SIGINT, _cleanup_gpu_on_exit)
     signal.signal(signal.SIGTERM, _cleanup_gpu_on_exit)

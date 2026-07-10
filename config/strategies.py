@@ -92,11 +92,14 @@ class Strategy:
 STRATEGIES: dict[str, Strategy] = {
 
     # ── Baseline ──────────────────────────────────────────────────────────
-    # vLLM 0.11.0's V1 scheduler always chunks prefill (no "off" switch) — the
-    # --enable-chunked-prefill flag is a no-op there. The unchunked-prefill
-    # equivalent is a token budget >= max_model_len, so any prompt fits in one
-    # scheduler step. max_num_seqs is pinned to 256 here and matched across
-    # every chunked_* variant below, so those sweeps vary only chunk size.
+    # This host runs vLLM 0.6.0, where chunked prefill is OFF unless
+    # --enable-chunked-prefill is passed, and the scheduler enforces
+    # max_num_batched_tokens >= max_model_len whenever chunking is off. So the
+    # unchunked-prefill baseline uses a token budget == max_model_len (any prompt
+    # fits in one scheduler step) and leaves chunked prefill disabled; the
+    # chunked_* variants below set enable_chunked_prefill=True with a smaller
+    # token budget. max_num_seqs is pinned to 256 here and matched across every
+    # chunked_* variant, so those sweeps vary only chunk size.
     "baseline_full_fp16_tp1": Strategy(
         name="baseline_full_fp16_tp1",
         tensor_parallel_size=1,
@@ -111,6 +114,7 @@ STRATEGIES: dict[str, Strategy] = {
     "chunked_256_fp16_tp1": Strategy(
         name="chunked_256_fp16_tp1",
         tensor_parallel_size=1,
+        enable_chunked_prefill=True,
         chunked_prefill_size=256,   # label compat only
         max_num_batched_tokens=256,
         max_num_seqs=256,
@@ -118,6 +122,7 @@ STRATEGIES: dict[str, Strategy] = {
     "chunked_512_fp16_tp1": Strategy(
         name="chunked_512_fp16_tp1",
         tensor_parallel_size=1,
+        enable_chunked_prefill=True,
         chunked_prefill_size=512,
         max_num_batched_tokens=512,
         max_num_seqs=256,
@@ -125,6 +130,7 @@ STRATEGIES: dict[str, Strategy] = {
     "chunked_1024_fp16_tp1": Strategy(
         name="chunked_1024_fp16_tp1",
         tensor_parallel_size=1,
+        enable_chunked_prefill=True,
         chunked_prefill_size=1024,
         max_num_batched_tokens=1024,
         max_num_seqs=256,
@@ -148,6 +154,7 @@ STRATEGIES: dict[str, Strategy] = {
     "chunked_512_fp16_tp2": Strategy(
         name="chunked_512_fp16_tp2",
         tensor_parallel_size=2,
+        enable_chunked_prefill=True,
         chunked_prefill_size=512,
         max_num_batched_tokens=512,
         max_num_seqs=256,
@@ -181,6 +188,7 @@ STRATEGIES: dict[str, Strategy] = {
     "chunked_512_fp8_tp1": Strategy(
         name="chunked_512_fp8_tp1",
         tensor_parallel_size=1,
+        enable_chunked_prefill=True,
         chunked_prefill_size=512,
         max_num_batched_tokens=512,
         max_num_seqs=256,
@@ -191,6 +199,7 @@ STRATEGIES: dict[str, Strategy] = {
     "chunked_512_spec_ngram3_fp16_tp1": Strategy(
         name="chunked_512_spec_ngram3_fp16_tp1",
         tensor_parallel_size=1,
+        enable_chunked_prefill=True,
         chunked_prefill_size=512,
         max_num_batched_tokens=512,
         max_num_seqs=256,

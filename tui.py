@@ -404,7 +404,12 @@ def confirm_and_run(
         console.print("[dim]Cancelled.[/dim]")
         return
 
-    kill_stale_gpu_workers()
+    # Scope the pre-launch sweep to the GPU(s)/port this TUI session owns, so
+    # launching a second session on another GPU won't kill this one's servers.
+    kill_stale_gpu_workers(
+        gpu_indices=[int(x) for x in opts["gpu"].split(",")],
+        ports=[int(opts["port"])],
+    )
 
     python = sys.executable
     run_id = datetime.now().strftime("%Y%m%d_%H%M%S")
