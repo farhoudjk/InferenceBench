@@ -1,0 +1,6 @@
+l40s_fair__llama31_8b__vllm__eqkv__c256_s256: cannot compute POOL
+l40s_fair__llama31_8b__sglang__eqkv__c256_s256: cannot compute POOL
+l40s_fair__llama31_8b__tensorrt-llm__eqkv__c256_s256: cannot compute POOL
+attempt1 (2026-11-20 ~20:05Z): llama sglang/default, trtllm/default, trtllm/maxutil failed at server start (SGLang: ninja not on PATH; TRT-LLM: pyarrow 26 needs NumPy>=2, venv has 1.26.4 -> fixed with pyarrow<21); llama eqkv x3 skipped (no POOL); nemo sglang/default killed by me mid-start. Disk was full. Moved to _provenance/failed_attempts/attempt1.
+nemo download failed
+2026-11-21T00:04:11Z nemo download failed (disk full: TRT-LLM had fetched Llama original/consolidated.00.pth 16GB; my Llama cleanup missed per-model blobs). GPU idle 23:01Z-~00:10Z. Restarted Nemo queue.

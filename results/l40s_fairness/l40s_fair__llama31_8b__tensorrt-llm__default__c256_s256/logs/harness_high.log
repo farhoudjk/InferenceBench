@@ -1,0 +1,629 @@
+21:23:50 INFO    benchmark.storage — ResultStore initialized at results/l40s_fairness/l40s_fair__llama31_8b__tensorrt-llm__default__c256_s256
+/home/ubuntu/projects/Bench2/.venv/lib/python3.12/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+21:23:51 INFO    benchmark.main — Python:      /home/ubuntu/projects/Bench2/.venv/bin/python
+21:23:51 INFO    benchmark.main — PyTorch:     2.8.0+cu128
+21:23:51 INFO    benchmark.main — CUDA built:  12.8
+21:23:51 INFO    benchmark.main — CUDA avail:  True
+21:23:51 INFO    benchmark.main — GPU 0:       NVIDIA L40S (44.4 GiB)
+21:23:51 INFO    benchmark.main — Overriding max_num_seqs for [baseline_full_fp16_tp1]: 256 → 256
+21:23:51 INFO    benchmark.main — Overriding num_requests for [mixed_real]: 400 → 500
+21:23:51 INFO    benchmark.main — Run ID: l40s_fair__llama31_8b__tensorrt-llm__default__c256_s256
+21:23:51 INFO    benchmark.main — Engine: tensorrtllm
+21:23:51 INFO    benchmark.main — Strategies: ['baseline_full_fp16_tp1']
+21:23:51 INFO    benchmark.main — Workloads:  ['mixed_real']
+21:23:51 INFO    benchmark.main — Rates:      ['high_poisson']
+21:23:51 INFO    benchmark.main — Results:    results/l40s_fairness/l40s_fair__llama31_8b__tensorrt-llm__default__c256_s256
+21:23:51 INFO    benchmark.main — 
+============================================================
+[1/1] Strategy: baseline_full_fp16_tp1  Workload: mixed_real  Rate: high_poisson
+============================================================
+21:23:51 INFO    benchmark.gpu_monitor — GPU 0: NVIDIA L40S — 45.0 GiB total, 44.4 GiB free
+21:23:51 INFO    benchmark.gpu_monitor — pynvml initialized successfully.
+21:23:51 INFO    benchmark.engines.base — === System state [before-start:baseline_full_fp16_tp1] ===
+  Port 8100: FREE
+  GPU 0: 3 MiB used / 46068 MiB total (45455 MiB free)
+21:23:51 INFO    benchmark.engines.base — Launching tensorrtllm [baseline_full_fp16_tp1] on port 8100
+21:23:51 INFO    benchmark.engines.base — Python:  /home/ubuntu/projects/InferenceBench/.venv-trtllm/bin/python3
+21:23:51 INFO    benchmark.engines.base — Command: /home/ubuntu/projects/InferenceBench/.venv-trtllm/bin/trtllm-serve serve meta-llama/Llama-3.1-8B-Instruct --host 127.0.0.1 --port 8100 --backend pytorch --tp_size 1 --kv_cache_free_gpu_memory_fraction 0.9 --extra_llm_api_options results/l40s_fairness/l40s_fair__llama31_8b__tensorrt-llm__default__c256_s256/trtllm_config_baseline_full_fp16_tp1_8100.yaml --max_batch_size 256 --max_num_tokens 8192 --max_seq_len 8192
+21:23:51 INFO    benchmark.engines.base — Log:     results/l40s_fairness/l40s_fair__llama31_8b__tensorrt-llm__default__c256_s256/tensorrtllm_baseline_full_fp16_tp1_seqs256.log
+21:23:51 INFO    benchmark.engines.base — Waiting for tensorrtllm [baseline_full_fp16_tp1] (timeout: 500s) ...
+21:24:21 INFO    benchmark.engines.base — tensorrtllm [baseline_full_fp16_tp1] still starting ... (30s elapsed, 470s remaining)
+21:24:51 INFO    benchmark.engines.base — tensorrtllm [baseline_full_fp16_tp1] still starting ... (60s elapsed, 440s remaining)
+21:25:21 INFO    benchmark.engines.base — tensorrtllm [baseline_full_fp16_tp1] still starting ... (90s elapsed, 410s remaining)
+21:25:27 INFO    benchmark.engines.base — tensorrtllm [baseline_full_fp16_tp1] /health OK after 1 polls (96.2s). Waiting for engine to accept requests...
+21:25:28 INFO    benchmark.engines.base — Warmup succeeded on attempt 1
+21:25:28 INFO    benchmark.engines.base — tensorrtllm [baseline_full_fp16_tp1] engine verified ready (96.3s total)
+21:25:30 INFO    benchmark.gpu_monitor — GPU monitor started for [baseline_full_fp16_tp1] (backend: pynvml)
+21:25:30 INFO    benchmark.runner — Starting benchmark: 500 requests, max_concurrent=256
+21:25:31 INFO    benchmark.runner — ✓ [1/500] mixed_real_0004 TTFT=103ms E2E=1154ms tokens=35 status=ok
+21:25:32 INFO    benchmark.runner — ✓ [2/500] mixed_real_0012 TTFT=70ms E2E=1119ms tokens=33 status=ok
+21:25:32 INFO    benchmark.runner — ✓ [3/500] mixed_real_0007 TTFT=78ms E2E=1517ms tokens=48 status=ok
+21:25:32 INFO    benchmark.runner — ✓ [4/500] mixed_real_0005 TTFT=255ms E2E=2138ms tokens=62 status=ok
+21:25:32 INFO    benchmark.runner — ✓ [5/500] mixed_real_0006 TTFT=90ms E2E=1940ms tokens=61 status=ok
+21:25:33 INFO    benchmark.runner — ✓ [6/500] mixed_real_0003 TTFT=196ms E2E=2564ms tokens=78 status=ok
+21:25:33 INFO    benchmark.runner — ✓ [7/500] mixed_real_0019 TTFT=194ms E2E=1559ms tokens=47 status=ok
+21:25:33 INFO    benchmark.runner — ✓ [8/500] mixed_real_0001 TTFT=196ms E2E=3063ms tokens=97 status=ok
+21:25:33 INFO    benchmark.runner — ✓ [9/500] mixed_real_0015 TTFT=58ms E2E=2356ms tokens=77 status=ok
+21:25:33 INFO    benchmark.runner — ✓ [10/500] mixed_real_0020 TTFT=125ms E2E=1849ms tokens=63 status=ok
+21:25:33 INFO    benchmark.runner —   Progress: 10/500 completed (10 ok, 0 errors)
+21:25:33 INFO    benchmark.runner — ✓ [11/500] mixed_real_0010 TTFT=84ms E2E=2755ms tokens=92 status=ok
+21:25:33 INFO    benchmark.runner — ✓ [12/500] mixed_real_0025 TTFT=147ms E2E=1258ms tokens=43 status=ok
+21:25:33 INFO    benchmark.runner — ✓ [13/500] mixed_real_0021 TTFT=100ms E2E=1777ms tokens=62 status=ok
+21:25:34 INFO    benchmark.runner — ✓ [14/500] mixed_real_0028 TTFT=88ms E2E=1076ms tokens=39 status=ok
+21:25:34 INFO    benchmark.runner — ✓ [15/500] mixed_real_0017 TTFT=111ms E2E=2640ms tokens=87 status=ok
+21:25:34 INFO    benchmark.runner — ✓ [16/500] mixed_real_0024 TTFT=119ms E2E=1838ms tokens=65 status=ok
+21:25:34 INFO    benchmark.runner — ✓ [17/500] mixed_real_0034 TTFT=80ms E2E=633ms tokens=23 status=ok
+21:25:35 INFO    benchmark.runner — ✓ [18/500] mixed_real_0023 TTFT=83ms E2E=2866ms tokens=105 status=ok
+21:25:35 INFO    benchmark.runner — ✓ [19/500] mixed_real_0029 TTFT=81ms E2E=2439ms tokens=89 status=ok
+21:25:35 INFO    benchmark.runner — ✓ [20/500] mixed_real_0039 TTFT=58ms E2E=750ms tokens=23 status=ok
+21:25:35 INFO    benchmark.runner —   Progress: 20/500 completed (20 ok, 0 errors)
+21:25:35 INFO    benchmark.runner — ✓ [21/500] mixed_real_0043 TTFT=67ms E2E=523ms tokens=14 status=ok
+21:25:35 INFO    benchmark.runner — ✓ [22/500] mixed_real_0033 TTFT=86ms E2E=1660ms tokens=58 status=ok
+21:25:35 INFO    benchmark.runner — ✓ [23/500] mixed_real_0047 TTFT=137ms E2E=675ms tokens=20 status=ok
+21:25:36 INFO    benchmark.runner — ✓ [24/500] mixed_real_0030 TTFT=81ms E2E=2754ms tokens=98 status=ok
+21:25:36 INFO    benchmark.runner — ✓ [25/500] mixed_real_0035 TTFT=55ms E2E=1987ms tokens=70 status=ok
+21:25:36 INFO    benchmark.runner — ✓ [26/500] mixed_real_0031 TTFT=83ms E2E=2721ms tokens=97 status=ok
+21:25:36 INFO    benchmark.runner — ✓ [27/500] mixed_real_0049 TTFT=70ms E2E=1523ms tokens=53 status=ok
+21:25:36 INFO    benchmark.runner — ✓ [28/500] mixed_real_0056 TTFT=58ms E2E=915ms tokens=33 status=ok
+21:25:36 INFO    benchmark.runner — ✓ [29/500] mixed_real_0053 TTFT=119ms E2E=1188ms tokens=41 status=ok
+21:25:37 INFO    benchmark.runner — ✓ [30/500] mixed_real_0052 TTFT=113ms E2E=1636ms tokens=57 status=ok
+21:25:37 INFO    benchmark.runner —   Progress: 30/500 completed (30 ok, 0 errors)
+21:25:37 INFO    benchmark.runner — ✓ [31/500] mixed_real_0038 TTFT=68ms E2E=2488ms tokens=87 status=ok
+21:25:37 INFO    benchmark.runner — ✓ [32/500] mixed_real_0051 TTFT=63ms E2E=1962ms tokens=70 status=ok
+21:25:37 INFO    benchmark.runner — ✓ [33/500] mixed_real_0055 TTFT=84ms E2E=1486ms tokens=54 status=ok
+21:25:37 INFO    benchmark.runner — ✓ [34/500] mixed_real_0058 TTFT=83ms E2E=1352ms tokens=49 status=ok
+21:25:37 INFO    benchmark.runner — ✓ [35/500] mixed_real_0059 TTFT=80ms E2E=1342ms tokens=49 status=ok
+21:25:37 INFO    benchmark.runner — ✓ [36/500] mixed_real_0045 TTFT=78ms E2E=2900ms tokens=102 status=ok
+21:25:38 INFO    benchmark.runner — ✓ [37/500] mixed_real_0064 TTFT=70ms E2E=797ms tokens=28 status=ok
+21:25:38 INFO    benchmark.runner — ✓ [38/500] mixed_real_0063 TTFT=68ms E2E=1108ms tokens=40 status=ok
+21:25:38 INFO    benchmark.runner — ✓ [39/500] mixed_real_0046 TTFT=151ms E2E=3286ms tokens=116 status=ok
+21:25:38 INFO    benchmark.runner — ✓ [40/500] mixed_real_0067 TTFT=79ms E2E=817ms tokens=28 status=ok
+21:25:38 INFO    benchmark.runner —   Progress: 40/500 completed (40 ok, 0 errors)
+21:25:38 INFO    benchmark.runner — ✓ [41/500] mixed_real_0069 TTFT=81ms E2E=861ms tokens=30 status=ok
+21:25:39 INFO    benchmark.runner — ✓ [42/500] mixed_real_0032 TTFT=65ms E2E=5616ms tokens=205 status=ok
+21:25:39 INFO    benchmark.runner — ✓ [43/500] mixed_real_0075 TTFT=108ms E2E=737ms tokens=22 status=ok
+21:25:40 INFO    benchmark.runner — ✓ [44/500] mixed_real_0082 TTFT=95ms E2E=821ms tokens=26 status=ok
+21:25:40 INFO    benchmark.runner — ✓ [45/500] mixed_real_0070 TTFT=81ms E2E=2476ms tokens=84 status=ok
+21:25:40 INFO    benchmark.runner — ✓ [46/500] mixed_real_0026 TTFT=136ms E2E=7874ms tokens=281 status=ok
+21:25:40 INFO    benchmark.runner — ✓ [47/500] mixed_real_0000 TTFT=196ms E2E=10224ms tokens=352 status=ok
+21:25:41 INFO    benchmark.runner — ✓ [48/500] mixed_real_0084 TTFT=93ms E2E=1274ms tokens=40 status=ok
+21:25:41 INFO    benchmark.runner — ✓ [49/500] mixed_real_0081 TTFT=137ms E2E=1939ms tokens=61 status=ok
+21:25:41 INFO    benchmark.runner — ✓ [50/500] mixed_real_0080 TTFT=101ms E2E=2026ms tokens=65 status=ok
+21:25:41 INFO    benchmark.runner —   Progress: 50/500 completed (50 ok, 0 errors)
+21:25:41 INFO    benchmark.runner — ✓ [51/500] mixed_real_0090 TTFT=113ms E2E=631ms tokens=18 status=ok
+21:25:41 INFO    benchmark.runner — ✓ [52/500] mixed_real_0085 TTFT=105ms E2E=1584ms tokens=51 status=ok
+21:25:41 INFO    benchmark.runner — ✓ [53/500] mixed_real_0036 TTFT=62ms E2E=7641ms tokens=269 status=ok
+21:25:42 INFO    benchmark.runner — ✓ [54/500] mixed_real_0065 TTFT=60ms E2E=4331ms tokens=148 status=ok
+21:25:42 INFO    benchmark.runner — ✓ [55/500] mixed_real_0087 TTFT=70ms E2E=1665ms tokens=55 status=ok
+21:25:42 INFO    benchmark.runner — ✓ [56/500] mixed_real_0091 TTFT=102ms E2E=2155ms tokens=74 status=ok
+21:25:43 INFO    benchmark.runner — ✓ [57/500] mixed_real_0086 TTFT=72ms E2E=2849ms tokens=90 status=ok
+21:25:43 INFO    benchmark.runner — ✓ [58/500] mixed_real_0096 TTFT=61ms E2E=1579ms tokens=48 status=ok
+21:25:43 INFO    benchmark.runner — ✓ [59/500] mixed_real_0071 TTFT=68ms E2E=5425ms tokens=179 status=ok
+21:25:43 INFO    benchmark.runner — ✓ [60/500] mixed_real_0089 TTFT=127ms E2E=3122ms tokens=99 status=ok
+21:25:43 INFO    benchmark.runner —   Progress: 60/500 completed (60 ok, 0 errors)
+21:25:43 INFO    benchmark.runner — ✓ [61/500] mixed_real_0097 TTFT=85ms E2E=1924ms tokens=59 status=ok
+21:25:43 INFO    benchmark.runner — ✓ [62/500] mixed_real_0088 TTFT=131ms E2E=3297ms tokens=105 status=ok
+21:25:44 INFO    benchmark.runner — ✓ [63/500] mixed_real_0050 TTFT=64ms E2E=8872ms tokens=302 status=ok
+21:25:44 INFO    benchmark.runner — ✓ [64/500] mixed_real_0104 TTFT=224ms E2E=1835ms tokens=49 status=ok
+21:25:45 INFO    benchmark.runner — ✓ [65/500] mixed_real_0103 TTFT=166ms E2E=2056ms tokens=56 status=ok
+21:25:45 INFO    benchmark.runner — ✓ [66/500] mixed_real_0077 TTFT=71ms E2E=6050ms tokens=193 status=ok
+21:25:45 INFO    benchmark.runner — ✓ [67/500] mixed_real_0114 TTFT=72ms E2E=830ms tokens=23 status=ok
+21:25:45 INFO    benchmark.runner — ✓ [68/500] mixed_real_0083 TTFT=81ms E2E=5711ms tokens=182 status=ok
+21:25:45 INFO    benchmark.runner — ✓ [69/500] mixed_real_0116 TTFT=203ms E2E=835ms tokens=22 status=ok
+21:25:45 INFO    benchmark.runner — ✓ [70/500] mixed_real_0099 TTFT=62ms E2E=3244ms tokens=96 status=ok
+21:25:45 INFO    benchmark.runner —   Progress: 70/500 completed (70 ok, 0 errors)
+21:25:45 INFO    benchmark.runner — ✓ [71/500] mixed_real_0072 TTFT=77ms E2E=7383ms tokens=237 status=ok
+21:25:45 INFO    benchmark.runner — ✓ [72/500] mixed_real_0061 TTFT=76ms E2E=8965ms tokens=296 status=ok
+21:25:46 INFO    benchmark.runner — ✓ [73/500] mixed_real_0107 TTFT=113ms E2E=3260ms tokens=100 status=ok
+21:25:46 INFO    benchmark.runner — ✓ [74/500] mixed_real_0062 TTFT=82ms E2E=9509ms tokens=313 status=ok
+21:25:46 INFO    benchmark.runner — ✓ [75/500] mixed_real_0101 TTFT=69ms E2E=3897ms tokens=117 status=ok
+21:25:46 INFO    benchmark.runner — ✓ [76/500] mixed_real_0108 TTFT=95ms E2E=3656ms tokens=114 status=ok
+21:25:47 INFO    benchmark.runner — ✓ [77/500] mixed_real_0124 TTFT=102ms E2E=1525ms tokens=47 status=ok
+21:25:47 INFO    benchmark.runner — ✓ [78/500] mixed_real_0117 TTFT=78ms E2E=2336ms tokens=75 status=ok
+21:25:47 INFO    benchmark.runner — ✓ [79/500] mixed_real_0113 TTFT=144ms E2E=3127ms tokens=96 status=ok
+21:25:47 INFO    benchmark.runner — ✓ [80/500] mixed_real_0018 TTFT=78ms E2E=15476ms tokens=523 status=ok
+21:25:47 INFO    benchmark.runner —   Progress: 80/500 completed (80 ok, 0 errors)
+21:25:47 INFO    benchmark.runner — ✓ [81/500] mixed_real_0127 TTFT=100ms E2E=1461ms tokens=47 status=ok
+21:25:48 INFO    benchmark.runner — ✓ [82/500] mixed_real_0112 TTFT=85ms E2E=4042ms tokens=127 status=ok
+21:25:48 INFO    benchmark.runner — ✓ [83/500] mixed_real_0119 TTFT=94ms E2E=3354ms tokens=109 status=ok
+21:25:48 INFO    benchmark.runner — ✓ [84/500] mixed_real_0095 TTFT=92ms E2E=7252ms tokens=233 status=ok
+21:25:48 INFO    benchmark.runner — ✓ [85/500] mixed_real_0037 TTFT=68ms E2E=14020ms tokens=472 status=ok
+21:25:48 INFO    benchmark.runner — ✓ [86/500] mixed_real_0125 TTFT=122ms E2E=3003ms tokens=98 status=ok
+21:25:48 INFO    benchmark.runner — ✓ [87/500] mixed_real_0115 TTFT=192ms E2E=4132ms tokens=132 status=ok
+21:25:48 INFO    benchmark.runner — ✓ [88/500] mixed_real_0073 TTFT=88ms E2E=10363ms tokens=337 status=ok
+21:25:49 INFO    benchmark.runner — ✓ [89/500] mixed_real_0008 TTFT=64ms E2E=18001ms tokens=611 status=ok
+21:25:49 INFO    benchmark.runner — ✓ [90/500] mixed_real_0100 TTFT=62ms E2E=7007ms tokens=220 status=ok
+21:25:49 INFO    benchmark.runner —   Progress: 90/500 completed (90 ok, 0 errors)
+21:25:49 INFO    benchmark.runner — ✓ [91/500] mixed_real_0123 TTFT=73ms E2E=4204ms tokens=136 status=ok
+21:25:49 INFO    benchmark.runner — ✓ [92/500] mixed_real_0132 TTFT=2491ms E2E=3249ms tokens=27 status=ok
+21:25:50 INFO    benchmark.runner — ✓ [93/500] mixed_real_0068 TTFT=86ms E2E=12276ms tokens=401 status=ok
+21:25:50 INFO    benchmark.runner — ✓ [94/500] mixed_real_0110 TTFT=88ms E2E=6392ms tokens=204 status=ok
+21:25:50 INFO    benchmark.runner — ✓ [95/500] mixed_real_0041 TTFT=84ms E2E=15731ms tokens=524 status=ok
+21:25:50 INFO    benchmark.runner — ✓ [96/500] mixed_real_0134 TTFT=2117ms E2E=3601ms tokens=52 status=ok
+21:25:50 INFO    benchmark.runner — ✓ [97/500] mixed_real_0121 TTFT=82ms E2E=5682ms tokens=182 status=ok
+21:25:51 INFO    benchmark.runner — ✓ [98/500] mixed_real_0138 TTFT=3328ms E2E=3826ms tokens=18 status=ok
+21:25:51 INFO    benchmark.runner — ✓ [99/500] mixed_real_0040 TTFT=61ms E2E=16592ms tokens=550 status=ok
+21:25:51 INFO    benchmark.runner — ✓ [100/500] mixed_real_0141 TTFT=3132ms E2E=3837ms tokens=25 status=ok
+21:25:51 INFO    benchmark.runner —   Progress: 100/500 completed (100 ok, 0 errors)
+21:25:51 INFO    benchmark.runner — ✓ [101/500] mixed_real_0133 TTFT=2127ms E2E=4732ms tokens=86 status=ok
+21:25:51 INFO    benchmark.runner — ✓ [102/500] mixed_real_0106 TTFT=187ms E2E=8657ms tokens=274 status=ok
+21:25:52 INFO    benchmark.runner — ✓ [103/500] mixed_real_0054 TTFT=70ms E2E=16245ms tokens=540 status=ok
+21:25:53 INFO    benchmark.runner — ✓ [104/500] mixed_real_0140 TTFT=3230ms E2E=5405ms tokens=66 status=ok
+21:25:53 INFO    benchmark.runner — ✓ [105/500] mixed_real_0079 TTFT=84ms E2E=14175ms tokens=450 status=ok
+21:25:53 INFO    benchmark.runner — ✓ [106/500] mixed_real_0137 TTFT=3510ms E2E=5983ms tokens=76 status=ok
+21:25:53 INFO    benchmark.runner — ✓ [107/500] mixed_real_0148 TTFT=4051ms E2E=5018ms tokens=33 status=ok
+21:25:53 INFO    benchmark.runner — ✓ [108/500] mixed_real_0136 TTFT=3686ms E2E=6345ms tokens=82 status=ok
+21:25:54 INFO    benchmark.runner — ✓ [109/500] mixed_real_0147 TTFT=4075ms E2E=5668ms tokens=54 status=ok
+21:25:54 INFO    benchmark.runner — ✓ [110/500] mixed_real_0145 TTFT=4338ms E2E=6079ms tokens=59 status=ok
+21:25:54 INFO    benchmark.runner —   Progress: 110/500 completed (110 ok, 0 errors)
+21:25:55 INFO    benchmark.runner — ✓ [111/500] mixed_real_0144 TTFT=4364ms E2E=6968ms tokens=83 status=ok
+21:25:55 INFO    benchmark.runner — ✓ [112/500] mixed_real_0152 TTFT=5074ms E2E=6452ms tokens=47 status=ok
+21:25:56 INFO    benchmark.runner — ✓ [113/500] mixed_real_0102 TTFT=74ms E2E=13245ms tokens=412 status=ok
+21:25:56 INFO    benchmark.runner — ✓ [114/500] mixed_real_0074 TTFT=114ms E2E=17833ms tokens=568 status=ok
+21:25:57 INFO    benchmark.runner — ✓ [115/500] mixed_real_0011 TTFT=72ms E2E=26028ms tokens=860 status=ok
+21:25:57 INFO    benchmark.runner — ✓ [116/500] mixed_real_0139 TTFT=3306ms E2E=9751ms tokens=204 status=ok
+21:25:58 INFO    benchmark.runner — ✓ [117/500] mixed_real_0151 TTFT=5147ms E2E=9266ms tokens=139 status=ok
+21:25:58 INFO    benchmark.runner — ✓ [118/500] mixed_real_0057 TTFT=80ms E2E=22705ms tokens=741 status=ok
+21:25:59 INFO    benchmark.runner — ✓ [119/500] mixed_real_0155 TTFT=9119ms E2E=10373ms tokens=41 status=ok
+21:26:00 INFO    benchmark.runner — ✓ [120/500] mixed_real_0111 TTFT=78ms E2E=16491ms tokens=524 status=ok
+21:26:00 INFO    benchmark.runner —   Progress: 120/500 completed (120 ok, 0 errors)
+21:26:00 INFO    benchmark.runner — ✓ [121/500] mixed_real_0156 TTFT=9510ms E2E=11410ms tokens=64 status=ok
+21:26:01 INFO    benchmark.runner — ✓ [122/500] mixed_real_0066 TTFT=81ms E2E=23364ms tokens=754 status=ok
+21:26:01 INFO    benchmark.runner — ✓ [123/500] mixed_real_0076 TTFT=68ms E2E=22106ms tokens=709 status=ok
+21:26:01 INFO    benchmark.runner — ✓ [124/500] mixed_real_0160 TTFT=10835ms E2E=11556ms tokens=25 status=ok
+21:26:01 INFO    benchmark.runner — ✓ [125/500] mixed_real_0150 TTFT=4275ms E2E=12284ms tokens=262 status=ok
+21:26:01 INFO    benchmark.runner — ✓ [126/500] mixed_real_0048 TTFT=64ms E2E=26217ms tokens=858 status=ok
+21:26:02 INFO    benchmark.runner — ✓ [127/500] mixed_real_0013 TTFT=70ms E2E=30834ms tokens=1018 status=ok
+21:26:02 INFO    benchmark.runner — ✓ [128/500] mixed_real_0060 TTFT=74ms E2E=25827ms tokens=831 status=ok
+21:26:03 INFO    benchmark.runner — ✓ [129/500] mixed_real_0163 TTFT=11391ms E2E=13166ms tokens=47 status=ok
+21:26:03 INFO    benchmark.runner — ✓ [130/500] mixed_real_0158 TTFT=10878ms E2E=13785ms tokens=84 status=ok
+21:26:03 INFO    benchmark.runner —   Progress: 130/500 completed (130 ok, 0 errors)
+21:26:03 INFO    benchmark.runner — ✓ [131/500] mixed_real_0146 TTFT=4242ms E2E=15286ms tokens=349 status=ok
+21:26:03 INFO    benchmark.runner — ✓ [132/500] mixed_real_0162 TTFT=11685ms E2E=13676ms tokens=54 status=ok
+21:26:03 INFO    benchmark.runner — ✓ [133/500] mixed_real_0173 TTFT=11508ms E2E=12494ms tokens=33 status=ok
+21:26:03 INFO    benchmark.runner — ✓ [134/500] mixed_real_0109 TTFT=92ms E2E=20200ms tokens=633 status=ok
+21:26:03 INFO    benchmark.runner — ✓ [135/500] mixed_real_0159 TTFT=10841ms E2E=14270ms tokens=101 status=ok
+21:26:04 INFO    benchmark.runner — ✓ [136/500] mixed_real_0171 TTFT=11277ms E2E=13105ms tokens=57 status=ok
+21:26:04 INFO    benchmark.runner — ✓ [137/500] mixed_real_0164 TTFT=11145ms E2E=14422ms tokens=96 status=ok
+21:26:04 INFO    benchmark.runner — ✓ [138/500] mixed_real_0174 TTFT=11299ms E2E=13295ms tokens=66 status=ok
+21:26:05 INFO    benchmark.runner — ✓ [139/500] mixed_real_0176 TTFT=11260ms E2E=13442ms tokens=72 status=ok
+21:26:05 INFO    benchmark.runner — ✓ [140/500] mixed_real_0177 TTFT=11192ms E2E=13803ms tokens=86 status=ok
+21:26:05 INFO    benchmark.runner —   Progress: 140/500 completed (140 ok, 0 errors)
+21:26:06 INFO    benchmark.runner — ✓ [141/500] mixed_real_0169 TTFT=11727ms E2E=15484ms tokens=120 status=ok
+21:26:06 INFO    benchmark.runner — ✓ [142/500] mixed_real_0178 TTFT=11122ms E2E=14497ms tokens=111 status=ok
+21:26:06 INFO    benchmark.runner — ✓ [143/500] mixed_real_0180 TTFT=12943ms E2E=14839ms tokens=63 status=ok
+21:26:06 INFO    benchmark.runner — ✓ [144/500] mixed_real_0142 TTFT=3825ms E2E=19075ms tokens=479 status=ok
+21:26:08 INFO    benchmark.runner — ✓ [145/500] mixed_real_0166 TTFT=11913ms E2E=17971ms tokens=195 status=ok
+21:26:08 INFO    benchmark.runner — ✓ [146/500] mixed_real_0167 TTFT=11772ms E2E=18229ms tokens=208 status=ok
+21:26:09 INFO    benchmark.runner — ✓ [147/500] mixed_real_0092 TTFT=81ms E2E=28388ms tokens=901 status=ok
+21:26:09 INFO    benchmark.runner — ✓ [148/500] mixed_real_0172 TTFT=11703ms E2E=18303ms tokens=215 status=ok
+21:26:10 INFO    benchmark.runner — ✓ [149/500] mixed_real_0170 TTFT=11382ms E2E=19262ms tokens=253 status=ok
+21:26:11 INFO    benchmark.runner — ✓ [150/500] mixed_real_0175 TTFT=11274ms E2E=19705ms tokens=274 status=ok
+21:26:11 INFO    benchmark.runner —   Progress: 150/500 completed (150 ok, 0 errors)
+21:26:12 INFO    benchmark.runner — ✓ [151/500] mixed_real_0182 TTFT=16794ms E2E=19478ms tokens=71 status=ok
+21:26:12 INFO    benchmark.runner — ✓ [152/500] mixed_real_0044 TTFT=85ms E2E=37350ms tokens=1204 status=ok
+21:26:12 INFO    benchmark.runner — ✓ [153/500] mixed_real_0188 TTFT=19400ms E2E=19432ms tokens=2 status=ok
+21:26:13 INFO    benchmark.runner — ✓ [154/500] mixed_real_0187 TTFT=19425ms E2E=20207ms tokens=26 status=ok
+21:26:14 INFO    benchmark.runner — ✓ [155/500] mixed_real_0185 TTFT=19711ms E2E=21625ms tokens=62 status=ok
+21:26:15 INFO    benchmark.runner — ✓ [156/500] mixed_real_0168 TTFT=11743ms E2E=25328ms tokens=434 status=ok
+21:26:17 INFO    benchmark.runner — ✓ [157/500] mixed_real_0186 TTFT=19463ms E2E=24180ms tokens=151 status=ok
+21:26:18 INFO    benchmark.runner — ✓ [158/500] mixed_real_0078 TTFT=69ms E2E=39409ms tokens=1254 status=ok
+21:26:19 INFO    benchmark.runner — ✓ [159/500] mixed_real_0203 TTFT=22598ms E2E=23135ms tokens=16 status=ok
+21:26:19 INFO    benchmark.runner — ✓ [160/500] mixed_real_0206 TTFT=22426ms E2E=23061ms tokens=19 status=ok
+21:26:19 INFO    benchmark.runner —   Progress: 160/500 completed (160 ok, 0 errors)
+21:26:19 INFO    benchmark.runner — ✓ [161/500] mixed_real_0201 TTFT=22855ms E2E=23589ms tokens=22 status=ok
+21:26:19 INFO    benchmark.runner — ✓ [162/500] mixed_real_0211 TTFT=21600ms E2E=22464ms tokens=26 status=ok
+21:26:19 INFO    benchmark.runner — ✓ [163/500] mixed_real_0195 TTFT=24855ms E2E=25818ms tokens=29 status=ok
+21:26:19 INFO    benchmark.runner — ✓ [164/500] mixed_real_0194 TTFT=25106ms E2E=26132ms tokens=31 status=ok
+21:26:19 INFO    benchmark.runner — ✓ [165/500] mixed_real_0191 TTFT=25530ms E2E=26624ms tokens=33 status=ok
+21:26:19 INFO    benchmark.runner — ✓ [166/500] mixed_real_0199 TTFT=23622ms E2E=24714ms tokens=33 status=ok
+21:26:20 INFO    benchmark.runner — ✓ [167/500] mixed_real_0193 TTFT=25179ms E2E=26632ms tokens=44 status=ok
+21:26:20 INFO    benchmark.runner — ✓ [168/500] mixed_real_0205 TTFT=22487ms E2E=24040ms tokens=47 status=ok
+21:26:20 INFO    benchmark.runner — ✓ [169/500] mixed_real_0204 TTFT=22521ms E2E=24073ms tokens=47 status=ok
+21:26:20 INFO    benchmark.runner — ✓ [170/500] mixed_real_0200 TTFT=23186ms E2E=24838ms tokens=50 status=ok
+21:26:20 INFO    benchmark.runner —   Progress: 170/500 completed (170 ok, 0 errors)
+21:26:20 INFO    benchmark.runner — ✓ [171/500] mixed_real_0202 TTFT=22622ms E2E=24698ms tokens=63 status=ok
+21:26:21 INFO    benchmark.runner — ✓ [172/500] mixed_real_0192 TTFT=25503ms E2E=27838ms tokens=71 status=ok
+21:26:21 INFO    benchmark.runner — ✓ [173/500] mixed_real_0207 TTFT=22411ms E2E=24847ms tokens=74 status=ok
+21:26:21 INFO    benchmark.runner — ✓ [174/500] mixed_real_0212 TTFT=21601ms E2E=24120ms tokens=78 status=ok
+21:26:21 INFO    benchmark.runner — ✓ [175/500] mixed_real_0210 TTFT=21789ms E2E=24453ms tokens=81 status=ok
+21:26:21 INFO    benchmark.runner — ✓ [176/500] mixed_real_0198 TTFT=23843ms E2E=26669ms tokens=86 status=ok
+21:26:21 INFO    benchmark.runner — ✓ [177/500] mixed_real_0190 TTFT=25579ms E2E=28500ms tokens=89 status=ok
+21:26:22 INFO    benchmark.runner — ✓ [178/500] mixed_real_0196 TTFT=24760ms E2E=28264ms tokens=107 status=ok
+21:26:22 INFO    benchmark.runner — ✓ [179/500] mixed_real_0157 TTFT=10907ms E2E=32857ms tokens=682 status=ok
+21:26:26 INFO    benchmark.runner — ✓ [180/500] mixed_real_0209 TTFT=21826ms E2E=29266ms tokens=228 status=ok
+21:26:26 INFO    benchmark.runner —   Progress: 180/500 completed (180 ok, 0 errors)
+21:26:26 INFO    benchmark.runner — ✓ [181/500] mixed_real_0208 TTFT=22359ms E2E=30156ms tokens=239 status=ok
+21:26:27 INFO    benchmark.runner — ✓ [182/500] mixed_real_0130 TTFT=2079ms E2E=40649ms tokens=1205 status=ok
+21:26:28 INFO    benchmark.runner — ✓ [183/500] mixed_real_0197 TTFT=24748ms E2E=34436ms tokens=298 status=ok
+21:26:28 INFO    benchmark.runner — ✓ [184/500] mixed_real_0161 TTFT=11717ms E2E=38680ms tokens=835 status=ok
+21:26:29 INFO    benchmark.runner — ✓ [185/500] mixed_real_0129 TTFT=1042ms E2E=43459ms tokens=1329 status=ok
+21:26:30 INFO    benchmark.runner — ✓ [186/500] mixed_real_0217 TTFT=31467ms E2E=32039ms tokens=18 status=ok
+21:26:30 INFO    benchmark.runner — ✓ [187/500] mixed_real_0225 TTFT=30473ms E2E=31281ms tokens=25 status=ok
+21:26:31 INFO    benchmark.runner — ✓ [188/500] mixed_real_0183 TTFT=16777ms E2E=38627ms tokens=669 status=ok
+21:26:31 INFO    benchmark.runner — ✓ [189/500] mixed_real_0224 TTFT=30580ms E2E=32106ms tokens=45 status=ok
+21:26:31 INFO    benchmark.runner — ✓ [190/500] mixed_real_0226 TTFT=30386ms E2E=32047ms tokens=49 status=ok
+21:26:31 INFO    benchmark.runner —   Progress: 190/500 completed (190 ok, 0 errors)
+21:26:31 INFO    benchmark.runner — ✓ [191/500] mixed_real_0216 TTFT=31626ms E2E=33288ms tokens=49 status=ok
+21:26:31 INFO    benchmark.runner — ✓ [192/500] mixed_real_0143 TTFT=4434ms E2E=43865ms tokens=1226 status=ok
+21:26:32 INFO    benchmark.runner — ✓ [193/500] mixed_real_0027 TTFT=124ms E2E=59662ms tokens=1896 status=ok
+21:26:32 INFO    benchmark.runner — ✓ [194/500] mixed_real_0219 TTFT=31402ms E2E=33967ms tokens=76 status=ok
+21:26:33 INFO    benchmark.runner — ✓ [195/500] mixed_real_0222 TTFT=30761ms E2E=34124ms tokens=100 status=ok
+21:26:33 INFO    benchmark.runner — ✓ [196/500] mixed_real_0228 TTFT=31376ms E2E=33632ms tokens=67 status=ok
+21:26:33 INFO    benchmark.runner — ✓ [197/500] mixed_real_0227 TTFT=30145ms E2E=33656ms tokens=103 status=ok
+21:26:33 INFO    benchmark.runner — ✓ [198/500] mixed_real_0231 TTFT=31947ms E2E=33422ms tokens=44 status=ok
+21:26:34 INFO    benchmark.runner — All 500 requests dispatched. Waiting for completions ...
+21:26:34 INFO    benchmark.runner — ✓ [199/500] mixed_real_0105 TTFT=201ms E2E=51795ms tokens=1603 status=ok
+21:26:35 INFO    benchmark.runner — ✓ [200/500] mixed_real_0184 TTFT=19760ms E2E=42477ms tokens=687 status=ok
+21:26:35 INFO    benchmark.runner —   Progress: 200/500 completed (200 ok, 0 errors)
+21:26:35 INFO    benchmark.runner — ✓ [201/500] mixed_real_0232 TTFT=33051ms E2E=34632ms tokens=49 status=ok
+21:26:35 INFO    benchmark.runner — ✓ [202/500] mixed_real_0126 TTFT=120ms E2E=49914ms tokens=1544 status=ok
+21:26:35 INFO    benchmark.runner — ✓ [203/500] mixed_real_0220 TTFT=30970ms E2E=36457ms tokens=160 status=ok
+21:26:36 INFO    benchmark.runner — ✓ [204/500] mixed_real_0243 TTFT=33782ms E2E=34241ms tokens=15 status=ok
+21:26:36 INFO    benchmark.runner — ✓ [205/500] mixed_real_0235 TTFT=34605ms E2E=35460ms tokens=27 status=ok
+21:26:36 INFO    benchmark.runner — ✓ [206/500] mixed_real_0241 TTFT=33877ms E2E=34833ms tokens=30 status=ok
+21:26:36 INFO    benchmark.runner — ✓ [207/500] mixed_real_0244 TTFT=33752ms E2E=34374ms tokens=20 status=ok
+21:26:36 INFO    benchmark.runner — ✓ [208/500] mixed_real_0240 TTFT=33992ms E2E=34947ms tokens=30 status=ok
+21:26:36 INFO    benchmark.runner — ✓ [209/500] mixed_real_0239 TTFT=34061ms E2E=35604ms tokens=48 status=ok
+21:26:38 INFO    benchmark.runner — ✓ [210/500] mixed_real_0237 TTFT=34290ms E2E=37149ms tokens=88 status=ok
+21:26:38 INFO    benchmark.runner —   Progress: 210/500 completed (210 ok, 0 errors)
+21:26:38 INFO    benchmark.runner — ✓ [211/500] mixed_real_0236 TTFT=34323ms E2E=37676ms tokens=103 status=ok
+21:26:38 INFO    benchmark.runner — ✓ [212/500] mixed_real_0042 TTFT=83ms E2E=63957ms tokens=2005 status=ok
+21:26:39 INFO    benchmark.runner — ✓ [213/500] mixed_real_0223 TTFT=30590ms E2E=39849ms tokens=275 status=ok
+21:26:39 INFO    benchmark.runner — ✓ [214/500] mixed_real_0245 TTFT=33627ms E2E=37720ms tokens=126 status=ok
+21:26:40 INFO    benchmark.runner — ✓ [215/500] mixed_real_0229 TTFT=30976ms E2E=39904ms tokens=268 status=ok
+21:26:40 INFO    benchmark.runner — ✓ [216/500] mixed_real_0221 TTFT=30862ms E2E=41266ms tokens=311 status=ok
+21:26:42 INFO    benchmark.runner — ✓ [217/500] mixed_real_0218 TTFT=31446ms E2E=43361ms tokens=359 status=ok
+21:26:42 INFO    benchmark.runner — ✓ [218/500] mixed_real_0213 TTFT=23955ms E2E=45532ms tokens=652 status=ok
+21:26:44 INFO    benchmark.runner — ✓ [219/500] mixed_real_0248 TTFT=40624ms E2E=42078ms tokens=45 status=ok
+21:26:44 INFO    benchmark.runner — ✓ [220/500] mixed_real_0249 TTFT=40583ms E2E=42369ms tokens=55 status=ok
+21:26:44 INFO    benchmark.runner —   Progress: 220/500 completed (220 ok, 0 errors)
+21:26:44 INFO    benchmark.runner — ✓ [221/500] mixed_real_0247 TTFT=40765ms E2E=42680ms tokens=59 status=ok
+21:26:45 INFO    benchmark.runner — ✓ [222/500] mixed_real_0153 TTFT=7822ms E2E=55641ms tokens=1470 status=ok
+21:26:45 INFO    benchmark.runner — ✓ [223/500] mixed_real_0261 TTFT=40218ms E2E=40625ms tokens=13 status=ok
+21:26:45 INFO    benchmark.runner — ✓ [224/500] mixed_real_0238 TTFT=34176ms E2E=44582ms tokens=314 status=ok
+21:26:46 INFO    benchmark.runner — ✓ [225/500] mixed_real_0255 TTFT=41168ms E2E=42047ms tokens=27 status=ok
+21:26:46 INFO    benchmark.runner — ✓ [226/500] mixed_real_0253 TTFT=42667ms E2E=43580ms tokens=28 status=ok
+21:26:46 INFO    benchmark.runner — ✓ [227/500] mixed_real_0258 TTFT=41087ms E2E=42201ms tokens=34 status=ok
+21:26:46 INFO    benchmark.runner — ✓ [228/500] mixed_real_0257 TTFT=41128ms E2E=42712ms tokens=48 status=ok
+21:26:47 INFO    benchmark.runner — ✓ [229/500] mixed_real_0256 TTFT=41158ms E2E=42877ms tokens=52 status=ok
+21:26:47 INFO    benchmark.runner — ✓ [230/500] mixed_real_0250 TTFT=40535ms E2E=44783ms tokens=122 status=ok
+21:26:47 INFO    benchmark.runner —   Progress: 230/500 completed (230 ok, 0 errors)
+21:26:48 INFO    benchmark.runner — ✓ [231/500] mixed_real_0259 TTFT=40755ms E2E=44105ms tokens=102 status=ok
+21:26:51 INFO    benchmark.runner — ✓ [232/500] mixed_real_0251 TTFT=40363ms E2E=48425ms tokens=239 status=ok
+21:26:51 INFO    benchmark.runner — ✓ [233/500] mixed_real_0260 TTFT=40489ms E2E=46481ms tokens=183 status=ok
+21:26:53 INFO    benchmark.runner — ✓ [234/500] mixed_real_0254 TTFT=41865ms E2E=50262ms tokens=256 status=ok
+21:26:54 INFO    benchmark.runner — ✓ [235/500] mixed_real_0189 TTFT=25646ms E2E=60867ms tokens=1058 status=ok
+21:26:54 INFO    benchmark.runner — ✓ [236/500] mixed_real_0266 TTFT=48517ms E2E=49037ms tokens=16 status=ok
+21:26:55 INFO    benchmark.runner — ✓ [237/500] mixed_real_0263 TTFT=49015ms E2E=50160ms tokens=34 status=ok
+21:26:57 INFO    benchmark.runner — ✓ [238/500] mixed_real_0264 TTFT=48788ms E2E=51647ms tokens=85 status=ok
+21:26:59 INFO    benchmark.runner — ✓ [239/500] mixed_real_0267 TTFT=47973ms E2E=52787ms tokens=143 status=ok
+21:26:59 INFO    benchmark.runner — ✓ [240/500] mixed_real_0181 TTFT=17308ms E2E=66953ms tokens=1495 status=ok
+21:26:59 INFO    benchmark.runner —   Progress: 240/500 completed (240 ok, 0 errors)
+21:27:00 INFO    benchmark.runner — ✓ [241/500] mixed_real_0009 TTFT=87ms E2E=89241ms tokens=2776 status=ok
+21:27:00 INFO    benchmark.runner — ✓ [242/500] mixed_real_0215 TTFT=31725ms E2E=62246ms tokens=903 status=ok
+21:27:01 INFO    benchmark.runner — ✓ [243/500] mixed_real_0272 TTFT=52484ms E2E=54903ms tokens=69 status=ok
+21:27:01 INFO    benchmark.runner — ✓ [244/500] mixed_real_0265 TTFT=48639ms E2E=56232ms tokens=218 status=ok
+21:27:02 INFO    benchmark.runner — ✓ [245/500] mixed_real_0275 TTFT=53611ms E2E=55633ms tokens=60 status=ok
+21:27:05 INFO    benchmark.runner — ✓ [246/500] mixed_real_0270 TTFT=52663ms E2E=58483ms tokens=170 status=ok
+21:27:05 INFO    benchmark.runner — ✓ [247/500] mixed_real_0274 TTFT=53626ms E2E=58376ms tokens=141 status=ok
+21:27:08 INFO    benchmark.runner — ✓ [248/500] mixed_real_0271 TTFT=52618ms E2E=61635ms tokens=264 status=ok
+21:27:10 INFO    benchmark.runner — ✓ [249/500] mixed_real_0246 TTFT=40832ms E2E=68389ms tokens=805 status=ok
+21:27:11 INFO    benchmark.runner — ✓ [250/500] mixed_real_0252 TTFT=42748ms E2E=69212ms tokens=772 status=ok
+21:27:11 INFO    benchmark.runner —   Progress: 250/500 completed (250 ok, 0 errors)
+21:27:12 INFO    benchmark.runner — ✓ [251/500] mixed_real_0279 TTFT=63263ms E2E=64712ms tokens=41 status=ok
+21:27:12 INFO    benchmark.runner — ✓ [252/500] mixed_real_0284 TTFT=62832ms E2E=64353ms tokens=43 status=ok
+21:27:13 INFO    benchmark.runner — ✓ [253/500] mixed_real_0280 TTFT=63108ms E2E=65566ms tokens=69 status=ok
+21:27:13 INFO    benchmark.runner — ✓ [254/500] mixed_real_0282 TTFT=62952ms E2E=65951ms tokens=84 status=ok
+21:27:14 INFO    benchmark.runner — ✓ [255/500] mixed_real_0283 TTFT=62915ms E2E=66371ms tokens=97 status=ok
+21:27:14 INFO    benchmark.runner — ✓ [256/500] mixed_real_0281 TTFT=63080ms E2E=67063ms tokens=112 status=ok
+21:27:15 INFO    benchmark.runner — ✓ [257/500] mixed_real_0277 TTFT=63421ms E2E=68183ms tokens=134 status=ok
+21:27:16 INFO    benchmark.runner — ✓ [258/500] mixed_real_0288 TTFT=67125ms E2E=68116ms tokens=29 status=ok
+21:27:17 INFO    benchmark.runner — ✓ [259/500] mixed_real_0287 TTFT=67191ms E2E=69495ms tokens=66 status=ok
+21:27:19 INFO    benchmark.runner — ✓ [260/500] mixed_real_0273 TTFT=53642ms E2E=72341ms tokens=533 status=ok
+21:27:19 INFO    benchmark.runner —   Progress: 260/500 completed (260 ok, 0 errors)
+21:27:20 INFO    benchmark.runner — ✓ [261/500] mixed_real_0291 TTFT=70839ms E2E=71981ms tokens=33 status=ok
+21:27:21 INFO    benchmark.runner — ✓ [262/500] mixed_real_0268 TTFT=47843ms E2E=74946ms tokens=772 status=ok
+21:27:23 INFO    benchmark.runner — ✓ [263/500] mixed_real_0297 TTFT=72265ms E2E=74089ms tokens=50 status=ok
+21:27:23 INFO    benchmark.runner — ✓ [264/500] mixed_real_0296 TTFT=72262ms E2E=74649ms tokens=65 status=ok
+21:27:27 INFO    benchmark.runner — ✓ [265/500] mixed_real_0016 TTFT=78ms E2E=115562ms tokens=3507 status=ok
+21:27:27 INFO    benchmark.runner — ✓ [266/500] mixed_real_0298 TTFT=72284ms E2E=78543ms tokens=168 status=ok
+21:27:28 INFO    benchmark.runner — ✓ [267/500] mixed_real_0295 TTFT=72334ms E2E=79033ms tokens=180 status=ok
+21:27:29 INFO    benchmark.runner — ✓ [268/500] mixed_real_0278 TTFT=63381ms E2E=82413ms tokens=521 status=ok
+21:27:36 INFO    benchmark.runner — ✓ [269/500] mixed_real_0293 TTFT=72598ms E2E=87340ms tokens=399 status=ok
+21:27:36 INFO    benchmark.runner — ✓ [270/500] mixed_real_0294 TTFT=72435ms E2E=87548ms tokens=409 status=ok
+21:27:36 INFO    benchmark.runner —   Progress: 270/500 completed (270 ok, 0 errors)
+21:27:36 INFO    benchmark.runner — ✓ [271/500] mixed_real_0269 TTFT=52875ms E2E=90268ms tokens=1039 status=ok
+21:27:37 INFO    benchmark.runner — ✓ [272/500] mixed_real_0094 TTFT=93ms E2E=116824ms tokens=3466 status=ok
+21:27:38 INFO    benchmark.runner — ✓ [273/500] mixed_real_0286 TTFT=66356ms E2E=89634ms tokens=633 status=ok
+21:27:38 INFO    benchmark.runner — ✓ [274/500] mixed_real_0289 TTFT=69461ms E2E=90167ms tokens=562 status=ok
+21:27:39 INFO    benchmark.runner — ✓ [275/500] mixed_real_0290 TTFT=71026ms E2E=91369ms tokens=551 status=ok
+21:27:41 INFO    benchmark.runner — ✓ [276/500] mixed_real_0285 TTFT=63735ms E2E=93480ms tokens=812 status=ok
+21:28:02 INFO    benchmark.runner — ✓ [277/500] mixed_real_0230 TTFT=31975ms E2E=122379ms tokens=2530 status=ok
+21:28:04 INFO    benchmark.runner — ✓ [278/500] mixed_real_0303 TTFT=112739ms E2E=113912ms tokens=30 status=ok
+21:28:04 INFO    benchmark.runner — ✓ [279/500] mixed_real_0306 TTFT=112655ms E2E=113988ms tokens=34 status=ok
+21:28:04 INFO    benchmark.runner — ✓ [280/500] mixed_real_0292 TTFT=72638ms E2E=115532ms tokens=1143 status=ok
+21:28:04 INFO    benchmark.runner —   Progress: 280/500 completed (280 ok, 0 errors)
+21:28:04 INFO    benchmark.runner — ✓ [281/500] mixed_real_0304 TTFT=112715ms E2E=114251ms tokens=39 status=ok
+21:28:05 INFO    benchmark.runner — ✓ [282/500] mixed_real_0307 TTFT=112366ms E2E=114571ms tokens=56 status=ok
+21:28:05 INFO    benchmark.runner — ✓ [283/500] mixed_real_0305 TTFT=112704ms E2E=115456ms tokens=70 status=ok
+21:28:06 INFO    benchmark.runner — ✓ [284/500] mixed_real_0308 TTFT=112168ms E2E=115669ms tokens=89 status=ok
+21:28:12 INFO    benchmark.runner — ✓ [285/500] mixed_real_0309 TTFT=111923ms E2E=121605ms tokens=245 status=ok
+21:28:13 INFO    benchmark.runner — ✓ [286/500] mixed_real_0312 TTFT=113069ms E2E=121600ms tokens=215 status=ok
+21:28:21 INFO    benchmark.runner — ✓ [287/500] mixed_real_0234 TTFT=34620ms E2E=141068ms tokens=2915 status=ok
+21:28:22 INFO    benchmark.runner — ✓ [288/500] mixed_real_0315 TTFT=130041ms E2E=130858ms tokens=21 status=ok
+21:28:22 INFO    benchmark.runner — ✓ [289/500] mixed_real_0302 TTFT=112849ms E2E=132813ms tokens=496 status=ok
+21:28:23 INFO    benchmark.runner — ✓ [290/500] mixed_real_0318 TTFT=130875ms E2E=131039ms tokens=5 status=ok
+21:28:23 INFO    benchmark.runner —   Progress: 290/500 completed (290 ok, 0 errors)
+21:28:23 INFO    benchmark.runner — ✓ [291/500] mixed_real_0131 TTFT=2753ms E2E=157375ms tokens=4388 status=ok
+21:28:26 INFO    benchmark.runner — ✓ [292/500] mixed_real_0320 TTFT=131304ms E2E=133610ms tokens=58 status=ok
+21:28:26 INFO    benchmark.runner — ✓ [293/500] mixed_real_0317 TTFT=130876ms E2E=134612ms tokens=92 status=ok
+21:28:39 INFO    benchmark.runner — ✓ [294/500] mixed_real_0310 TTFT=111635ms E2E=147845ms tokens=890 status=ok
+21:28:44 INFO    benchmark.runner — ✓ [295/500] mixed_real_0313 TTFT=121385ms E2E=153044ms tokens=769 status=ok
+21:28:45 INFO    benchmark.runner — ✓ [296/500] mixed_real_0299 TTFT=87248ms E2E=156049ms tokens=1736 status=ok
+21:28:46 INFO    benchmark.runner — ✓ [297/500] mixed_real_0324 TTFT=152190ms E2E=153212ms tokens=25 status=ok
+21:28:48 INFO    benchmark.runner — ✓ [298/500] mixed_real_0323 TTFT=152148ms E2E=154877ms tokens=65 status=ok
+21:28:49 INFO    benchmark.runner — ✓ [299/500] mixed_real_0322 TTFT=152417ms E2E=155995ms tokens=85 status=ok
+21:28:50 INFO    benchmark.runner — ✓ [300/500] mixed_real_0128 TTFT=74ms E2E=184118ms tokens=5117 status=ok
+21:28:50 INFO    benchmark.runner —   Progress: 300/500 completed (300 ok, 0 errors)
+21:28:52 INFO    benchmark.runner — ✓ [301/500] mixed_real_0329 TTFT=155970ms E2E=157790ms tokens=44 status=ok
+21:28:53 INFO    benchmark.runner — ✓ [302/500] mixed_real_0328 TTFT=156217ms E2E=158968ms tokens=66 status=ok
+21:28:53 INFO    benchmark.runner — ✓ [303/500] mixed_real_0326 TTFT=156752ms E2E=159714ms tokens=71 status=ok
+21:28:54 INFO    benchmark.runner — ✓ [304/500] mixed_real_0311 TTFT=113100ms E2E=162846ms tokens=1201 status=ok
+21:28:54 INFO    benchmark.runner — ✓ [305/500] mixed_real_0327 TTFT=156420ms E2E=160463ms tokens=92 status=ok
+21:28:56 INFO    benchmark.runner — ✓ [306/500] mixed_real_0336 TTFT=158892ms E2E=160697ms tokens=42 status=ok
+21:28:56 INFO    benchmark.runner — ✓ [307/500] mixed_real_0341 TTFT=158371ms E2E=160440ms tokens=48 status=ok
+21:28:57 INFO    benchmark.runner — ✓ [308/500] mixed_real_0339 TTFT=158554ms E2E=161413ms tokens=66 status=ok
+21:28:57 INFO    benchmark.runner — ✓ [309/500] mixed_real_0334 TTFT=159166ms E2E=162290ms tokens=72 status=ok
+21:28:58 INFO    benchmark.runner — ✓ [310/500] mixed_real_0337 TTFT=158680ms E2E=162854ms tokens=96 status=ok
+21:28:58 INFO    benchmark.runner —   Progress: 310/500 completed (310 ok, 0 errors)
+21:28:59 INFO    benchmark.runner — ✓ [311/500] mixed_real_0332 TTFT=159438ms E2E=164254ms tokens=111 status=ok
+21:29:02 INFO    benchmark.runner — ✓ [312/500] mixed_real_0340 TTFT=158356ms E2E=166085ms tokens=179 status=ok
+21:29:02 INFO    benchmark.runner — ✓ [313/500] mixed_real_0316 TTFT=131083ms E2E=170580ms tokens=928 status=ok
+21:29:03 INFO    benchmark.runner — ✓ [314/500] mixed_real_0343 TTFT=166473ms E2E=167314ms tokens=20 status=ok
+21:29:05 INFO    benchmark.runner — ✓ [315/500] mixed_real_0344 TTFT=166425ms E2E=169434ms tokens=70 status=ok
+21:29:05 INFO    benchmark.runner — ✓ [316/500] mixed_real_0120 TTFT=84ms E2E=200598ms tokens=5497 status=ok
+21:29:06 INFO    benchmark.runner — ✓ [317/500] mixed_real_0351 TTFT=168176ms E2E=168835ms tokens=16 status=ok
+21:29:06 INFO    benchmark.runner — ✓ [318/500] mixed_real_0347 TTFT=168964ms E2E=169974ms tokens=24 status=ok
+21:29:07 INFO    benchmark.runner — ✓ [319/500] mixed_real_0350 TTFT=168275ms E2E=169547ms tokens=30 status=ok
+21:29:08 INFO    benchmark.runner — ✓ [320/500] mixed_real_0352 TTFT=167826ms E2E=170023ms tokens=51 status=ok
+21:29:08 INFO    benchmark.runner —   Progress: 320/500 completed (320 ok, 0 errors)
+21:29:08 INFO    benchmark.runner — ✓ [321/500] mixed_real_0333 TTFT=159422ms E2E=173578ms tokens=323 status=ok
+21:29:09 INFO    benchmark.runner — ✓ [322/500] mixed_real_0349 TTFT=168770ms E2E=171922ms tokens=73 status=ok
+21:29:10 INFO    benchmark.runner — ✓ [323/500] mixed_real_0338 TTFT=158603ms E2E=174645ms tokens=367 status=ok
+21:29:11 INFO    benchmark.runner — ✓ [324/500] mixed_real_0348 TTFT=168836ms E2E=174129ms tokens=123 status=ok
+21:29:14 INFO    benchmark.runner — ✓ [325/500] mixed_real_0345 TTFT=166175ms E2E=178043ms tokens=273 status=ok
+21:29:14 INFO    benchmark.runner — ✓ [326/500] mixed_real_0335 TTFT=158921ms E2E=179054ms tokens=462 status=ok
+21:29:15 INFO    benchmark.runner — ✓ [327/500] mixed_real_0135 TTFT=3698ms E2E=208724ms tokens=5548 status=ok
+21:29:20 INFO    benchmark.runner — ✓ [328/500] mixed_real_0354 TTFT=177451ms E2E=182380ms tokens=117 status=ok
+21:29:21 INFO    benchmark.runner — ✓ [329/500] mixed_real_0149 TTFT=4904ms E2E=212910ms tokens=5601 status=ok
+21:29:25 INFO    benchmark.runner — ✓ [330/500] mixed_real_0321 TTFT=152625ms E2E=192602ms tokens=921 status=ok
+21:29:25 INFO    benchmark.runner —   Progress: 330/500 completed (330 ok, 0 errors)
+21:29:27 INFO    benchmark.runner — ✓ [331/500] mixed_real_0358 TTFT=186821ms E2E=188607ms tokens=43 status=ok
+21:29:30 INFO    benchmark.runner — ✓ [332/500] mixed_real_0098 TTFT=84ms E2E=228405ms tokens=6164 status=ok
+21:29:37 INFO    benchmark.runner — ✓ [333/500] mixed_real_0342 TTFT=166499ms E2E=200862ms tokens=803 status=ok
+21:29:39 INFO    benchmark.runner — ✓ [334/500] mixed_real_0365 TTFT=197533ms E2E=199428ms tokens=44 status=ok
+21:29:39 INFO    benchmark.runner — ✓ [335/500] mixed_real_0362 TTFT=197793ms E2E=199732ms tokens=45 status=ok
+21:29:40 INFO    benchmark.runner — ✓ [336/500] mixed_real_0368 TTFT=199327ms E2E=200697ms tokens=32 status=ok
+21:29:40 INFO    benchmark.runner — ✓ [337/500] mixed_real_0364 TTFT=197644ms E2E=201172ms tokens=81 status=ok
+21:29:41 INFO    benchmark.runner — ✓ [338/500] mixed_real_0363 TTFT=197702ms E2E=201491ms tokens=87 status=ok
+21:29:45 INFO    benchmark.runner — ✓ [339/500] mixed_real_0360 TTFT=191565ms E2E=205802ms tokens=330 status=ok
+21:29:45 INFO    benchmark.runner — ✓ [340/500] mixed_real_0367 TTFT=199327ms E2E=205625ms tokens=146 status=ok
+21:29:45 INFO    benchmark.runner —   Progress: 340/500 completed (340 ok, 0 errors)
+21:29:46 INFO    benchmark.runner — ✓ [341/500] mixed_real_0366 TTFT=197499ms E2E=206520ms tokens=208 status=ok
+21:29:46 INFO    benchmark.runner — ✓ [342/500] mixed_real_0330 TTFT=159668ms E2E=211948ms tokens=1211 status=ok
+21:29:54 INFO    benchmark.runner — ✓ [343/500] mixed_real_0357 TTFT=186835ms E2E=215211ms tokens=657 status=ok
+21:29:56 INFO    benchmark.runner — ✓ [344/500] mixed_real_0359 TTFT=191731ms E2E=217548ms tokens=595 status=ok
+21:29:58 INFO    benchmark.runner — ✓ [345/500] mixed_real_0314 TTFT=130310ms E2E=227355ms tokens=2258 status=ok
+21:29:59 INFO    benchmark.runner — ✓ [346/500] mixed_real_0319 TTFT=131551ms E2E=226853ms tokens=2216 status=ok
+21:30:02 INFO    benchmark.runner — ✓ [347/500] mixed_real_0374 TTFT=218654ms E2E=221666ms tokens=69 status=ok
+21:30:02 INFO    benchmark.runner — ✓ [348/500] mixed_real_0373 TTFT=218712ms E2E=221902ms tokens=73 status=ok
+21:30:02 INFO    benchmark.runner — ✓ [349/500] mixed_real_0375 TTFT=218643ms E2E=221966ms tokens=76 status=ok
+21:30:08 INFO    benchmark.runner — ✓ [350/500] mixed_real_0356 TTFT=182499ms E2E=229263ms tokens=1074 status=ok
+21:30:08 INFO    benchmark.runner —   Progress: 350/500 completed (350 ok, 0 errors)
+21:30:11 INFO    benchmark.runner — ✓ [351/500] mixed_real_0331 TTFT=159634ms E2E=237100ms tokens=1779 status=ok
+21:30:12 INFO    benchmark.runner — ✓ [352/500] mixed_real_0372 TTFT=218849ms E2E=231721ms tokens=291 status=ok
+21:30:12 INFO    benchmark.runner — ✓ [353/500] mixed_real_0346 TTFT=169005ms E2E=235664ms tokens=1533 status=ok
+21:30:14 INFO    benchmark.runner — ✓ [354/500] mixed_real_0371 TTFT=216282ms E2E=233541ms tokens=387 status=ok
+21:30:14 INFO    benchmark.runner — ✓ [355/500] mixed_real_0380 TTFT=231207ms E2E=232802ms tokens=37 status=ok
+21:30:15 INFO    benchmark.runner — ✓ [356/500] mixed_real_0378 TTFT=231376ms E2E=233995ms tokens=60 status=ok
+21:30:25 INFO    benchmark.runner — ✓ [357/500] mixed_real_0361 TTFT=197909ms E2E=246033ms tokens=1087 status=ok
+21:30:27 INFO    benchmark.runner — ✓ [358/500] mixed_real_0382 TTFT=243890ms E2E=246432ms tokens=57 status=ok
+21:30:28 INFO    benchmark.runner — ✓ [359/500] mixed_real_0353 TTFT=177889ms E2E=250698ms tokens=1661 status=ok
+21:30:31 INFO    benchmark.runner — ✓ [360/500] mixed_real_0385 TTFT=247618ms E2E=249582ms tokens=42 status=ok
+21:30:31 INFO    benchmark.runner —   Progress: 360/500 completed (360 ok, 0 errors)
+21:30:31 INFO    benchmark.runner — ✓ [361/500] mixed_real_0391 TTFT=246626ms E2E=248871ms tokens=48 status=ok
+21:30:31 INFO    benchmark.runner — ✓ [362/500] mixed_real_0384 TTFT=247661ms E2E=249907ms tokens=48 status=ok
+21:30:32 INFO    benchmark.runner — ✓ [363/500] mixed_real_0390 TTFT=246747ms E2E=249507ms tokens=59 status=ok
+21:30:32 INFO    benchmark.runner — ✓ [364/500] mixed_real_0389 TTFT=247037ms E2E=250384ms tokens=71 status=ok
+21:30:32 INFO    benchmark.runner — ✓ [365/500] mixed_real_0388 TTFT=247179ms E2E=250757ms tokens=76 status=ok
+21:30:33 INFO    benchmark.runner — ✓ [366/500] mixed_real_0387 TTFT=247533ms E2E=251295ms tokens=80 status=ok
+21:30:33 INFO    benchmark.runner — ✓ [367/500] mixed_real_0377 TTFT=231425ms E2E=252318ms tokens=451 status=ok
+21:30:33 INFO    benchmark.runner — ✓ [368/500] mixed_real_0383 TTFT=247722ms E2E=251985ms tokens=90 status=ok
+21:30:34 INFO    benchmark.runner — ✓ [369/500] mixed_real_0393 TTFT=249369ms E2E=251625ms tokens=49 status=ok
+21:30:35 INFO    benchmark.runner — ✓ [370/500] mixed_real_0002 TTFT=195ms E2E=304307ms tokens=8003 status=ok
+21:30:35 INFO    benchmark.runner —   Progress: 370/500 completed (370 ok, 0 errors)
+21:30:35 INFO    benchmark.runner — ✓ [371/500] mixed_real_0386 TTFT=247598ms E2E=253865ms tokens=132 status=ok
+21:30:36 INFO    benchmark.runner — ✓ [372/500] mixed_real_0402 TTFT=251672ms E2E=252673ms tokens=23 status=ok
+21:30:36 INFO    benchmark.runner — ✓ [373/500] mixed_real_0396 TTFT=250485ms E2E=253443ms tokens=64 status=ok
+21:30:36 INFO    benchmark.runner — ✓ [374/500] mixed_real_0398 TTFT=250247ms E2E=253429ms tokens=69 status=ok
+21:30:37 INFO    benchmark.runner — ✓ [375/500] mixed_real_0022 TTFT=103ms E2E=305163ms tokens=8010 status=ok
+21:30:37 INFO    benchmark.runner — ✓ [376/500] mixed_real_0401 TTFT=251755ms E2E=254394ms tokens=59 status=ok
+21:30:37 INFO    benchmark.runner — ✓ [377/500] mixed_real_0397 TTFT=250382ms E2E=254800ms tokens=96 status=ok
+21:30:38 INFO    benchmark.runner — ✓ [378/500] mixed_real_0014 TTFT=59ms E2E=307011ms tokens=8058 status=ok
+21:30:42 INFO    benchmark.runner — ✓ [379/500] mixed_real_0404 TTFT=253518ms E2E=258208ms tokens=112 status=ok
+21:30:46 INFO    benchmark.runner — ✓ [380/500] mixed_real_0093 TTFT=69ms E2E=305577ms tokens=7914 status=ok
+21:30:46 INFO    benchmark.runner —   Progress: 380/500 completed (380 ok, 0 errors)
+21:30:48 INFO    benchmark.runner — ✓ [381/500] mixed_real_0413 TTFT=262040ms E2E=263626ms tokens=38 status=ok
+21:30:49 INFO    benchmark.runner — ✓ [382/500] mixed_real_0411 TTFT=262166ms E2E=264398ms tokens=53 status=ok
+21:30:49 INFO    benchmark.runner — ✓ [383/500] mixed_real_0412 TTFT=262024ms E2E=264425ms tokens=57 status=ok
+21:30:49 INFO    benchmark.runner — ✓ [384/500] mixed_real_0407 TTFT=262730ms E2E=265422ms tokens=64 status=ok
+21:30:49 INFO    benchmark.runner — ✓ [385/500] mixed_real_0395 TTFT=250562ms E2E=266776ms tokens=372 status=ok
+21:30:49 INFO    benchmark.runner — ✓ [386/500] mixed_real_0409 TTFT=262555ms E2E=265455ms tokens=69 status=ok
+21:30:50 INFO    benchmark.runner — ✓ [387/500] mixed_real_0376 TTFT=227366ms E2E=269037ms tokens=924 status=ok
+21:30:51 INFO    benchmark.runner — ✓ [388/500] mixed_real_0415 TTFT=265367ms E2E=266831ms tokens=36 status=ok
+21:30:52 INFO    benchmark.runner — ✓ [389/500] mixed_real_0410 TTFT=262343ms E2E=267971ms tokens=130 status=ok
+21:30:52 INFO    benchmark.runner — ✓ [390/500] mixed_real_0379 TTFT=231369ms E2E=271313ms tokens=885 status=ok
+21:30:52 INFO    benchmark.runner —   Progress: 390/500 completed (390 ok, 0 errors)
+21:30:53 INFO    benchmark.runner — ✓ [391/500] mixed_real_0381 TTFT=243935ms E2E=271610ms tokens=612 status=ok
+21:30:54 INFO    benchmark.runner — ✓ [392/500] mixed_real_0416 TTFT=266929ms E2E=269563ms tokens=64 status=ok
+21:30:55 INFO    benchmark.runner — ✓ [393/500] mixed_real_0399 TTFT=250169ms E2E=272078ms tokens=504 status=ok
+21:30:56 INFO    benchmark.runner — ✓ [394/500] mixed_real_0408 TTFT=262603ms E2E=272068ms tokens=222 status=ok
+21:30:57 INFO    benchmark.runner — ✓ [395/500] mixed_real_0122 TTFT=74ms E2E=311633ms tokens=8015 status=ok
+21:30:57 INFO    benchmark.runner — ✓ [396/500] mixed_real_0118 TTFT=81ms E2E=312158ms tokens=8032 status=ok
+21:30:57 INFO    benchmark.runner — ✓ [397/500] mixed_real_0369 TTFT=206649ms E2E=277245ms tokens=1579 status=ok
+21:30:58 INFO    benchmark.runner — ✓ [398/500] mixed_real_0429 TTFT=271397ms E2E=271967ms tokens=15 status=ok
+21:30:58 INFO    benchmark.runner — ✓ [399/500] mixed_real_0428 TTFT=271543ms E2E=272360ms tokens=21 status=ok
+21:30:58 INFO    benchmark.runner — ✓ [400/500] mixed_real_0426 TTFT=271534ms E2E=272653ms tokens=28 status=ok
+21:30:58 INFO    benchmark.runner —   Progress: 400/500 completed (400 ok, 0 errors)
+21:30:59 INFO    benchmark.runner — ✓ [401/500] mixed_real_0431 TTFT=271356ms E2E=272774ms tokens=36 status=ok
+21:30:59 INFO    benchmark.runner — ✓ [402/500] mixed_real_0433 TTFT=270978ms E2E=272634ms tokens=42 status=ok
+21:31:00 INFO    benchmark.runner — ✓ [403/500] mixed_real_0425 TTFT=271666ms E2E=275128ms tokens=86 status=ok
+21:31:02 INFO    benchmark.runner — ✓ [404/500] mixed_real_0394 TTFT=250601ms E2E=279346ms tokens=667 status=ok
+21:31:02 INFO    benchmark.runner — ✓ [405/500] mixed_real_0392 TTFT=248924ms E2E=279775ms tokens=712 status=ok
+21:31:03 INFO    benchmark.runner — ✓ [406/500] mixed_real_0419 TTFT=267986ms E2E=278115ms tokens=242 status=ok
+21:31:03 INFO    benchmark.runner — ✓ [407/500] mixed_real_0434 TTFT=270764ms E2E=276789ms tokens=148 status=ok
+21:31:05 INFO    benchmark.runner — ✓ [408/500] mixed_real_0442 TTFT=271716ms E2E=274079ms tokens=59 status=ok
+21:31:05 INFO    benchmark.runner — ✓ [409/500] mixed_real_0165 TTFT=11943ms E2E=314650ms tokens=7673 status=ok
+21:31:05 INFO    benchmark.runner — ✓ [410/500] mixed_real_0422 TTFT=271729ms E2E=279824ms tokens=194 status=ok
+21:31:05 INFO    benchmark.runner —   Progress: 410/500 completed (410 ok, 0 errors)
+21:31:06 INFO    benchmark.runner — ✓ [411/500] mixed_real_0445 TTFT=273365ms E2E=274269ms tokens=24 status=ok
+21:31:07 INFO    benchmark.runner — ✓ [412/500] mixed_real_0437 TTFT=270447ms E2E=280516ms tokens=249 status=ok
+21:31:08 INFO    benchmark.runner — ✓ [413/500] mixed_real_0444 TTFT=273500ms E2E=276574ms tokens=79 status=ok
+21:31:08 INFO    benchmark.runner — ✓ [414/500] mixed_real_0420 TTFT=267921ms E2E=283485ms tokens=378 status=ok
+21:31:10 INFO    benchmark.runner — ✓ [415/500] mixed_real_0435 TTFT=270757ms E2E=283554ms tokens=318 status=ok
+21:31:12 INFO    benchmark.runner — ✓ [416/500] mixed_real_0417 TTFT=267729ms E2E=287510ms tokens=485 status=ok
+21:31:13 INFO    benchmark.runner — ✓ [417/500] mixed_real_0449 TTFT=279925ms E2E=280531ms tokens=16 status=ok
+21:31:13 INFO    benchmark.runner — ✓ [418/500] mixed_real_0450 TTFT=279129ms E2E=280060ms tokens=24 status=ok
+21:31:15 INFO    benchmark.runner — ✓ [419/500] mixed_real_0154 TTFT=9150ms E2E=325901ms tokens=8044 status=ok
+21:31:15 INFO    benchmark.runner — ✓ [420/500] mixed_real_0448 TTFT=280291ms E2E=283275ms tokens=74 status=ok
+21:31:15 INFO    benchmark.runner —   Progress: 420/500 completed (420 ok, 0 errors)
+21:31:15 INFO    benchmark.runner — ✓ [421/500] mixed_real_0451 TTFT=278986ms E2E=282126ms tokens=78 status=ok
+21:31:15 INFO    benchmark.runner — ✓ [422/500] mixed_real_0423 TTFT=271578ms E2E=290205ms tokens=457 status=ok
+21:31:16 INFO    benchmark.runner — ✓ [423/500] mixed_real_0457 TTFT=279964ms E2E=280866ms tokens=24 status=ok
+21:31:17 INFO    benchmark.runner — ✓ [424/500] mixed_real_0440 TTFT=272462ms E2E=287324ms tokens=370 status=ok
+21:31:17 INFO    benchmark.runner — ✓ [425/500] mixed_real_0441 TTFT=271951ms E2E=286698ms tokens=369 status=ok
+21:31:19 INFO    benchmark.runner — ✓ [426/500] mixed_real_0454 TTFT=280523ms E2E=284195ms tokens=95 status=ok
+21:31:20 INFO    benchmark.runner — ✓ [427/500] mixed_real_0179 TTFT=13102ms E2E=329067ms tokens=7992 status=ok
+21:31:23 INFO    benchmark.runner — ✓ [428/500] mixed_real_0432 TTFT=271248ms E2E=297040ms tokens=648 status=ok
+21:31:25 INFO    benchmark.runner — ✓ [429/500] mixed_real_0430 TTFT=271342ms E2E=299369ms tokens=708 status=ok
+21:31:25 INFO    benchmark.runner — ✓ [430/500] mixed_real_0427 TTFT=271712ms E2E=300041ms tokens=716 status=ok
+21:31:25 INFO    benchmark.runner —   Progress: 430/500 completed (430 ok, 0 errors)
+21:31:26 INFO    benchmark.runner — ✓ [431/500] mixed_real_0400 TTFT=251783ms E2E=303149ms tokens=1248 status=ok
+21:31:27 INFO    benchmark.runner — ✓ [432/500] mixed_real_0462 TTFT=289641ms E2E=291267ms tokens=40 status=ok
+21:31:28 INFO    benchmark.runner — ✓ [433/500] mixed_real_0465 TTFT=288473ms E2E=290652ms tokens=57 status=ok
+21:31:29 INFO    benchmark.runner — ✓ [434/500] mixed_real_0446 TTFT=273358ms E2E=297453ms tokens=614 status=ok
+21:31:29 INFO    benchmark.runner — ✓ [435/500] mixed_real_0466 TTFT=287982ms E2E=290827ms tokens=73 status=ok
+21:31:30 INFO    benchmark.runner — ✓ [436/500] mixed_real_0455 TTFT=280258ms E2E=295193ms tokens=385 status=ok
+21:31:31 INFO    benchmark.runner — ✓ [437/500] mixed_real_0443 TTFT=273883ms E2E=299970ms tokens=664 status=ok
+21:31:32 INFO    benchmark.runner — ✓ [438/500] mixed_real_0468 TTFT=289979ms E2E=292991ms tokens=69 status=ok
+21:31:33 INFO    benchmark.runner — ✓ [439/500] mixed_real_0447 TTFT=280730ms E2E=301130ms tokens=512 status=ok
+21:31:33 INFO    benchmark.runner — ✓ [440/500] mixed_real_0459 TTFT=284814ms E2E=297107ms tokens=305 status=ok
+21:31:33 INFO    benchmark.runner —   Progress: 440/500 completed (440 ok, 0 errors)
+21:31:33 INFO    benchmark.runner — ✓ [441/500] mixed_real_0470 TTFT=291340ms E2E=292975ms tokens=40 status=ok
+21:31:33 INFO    benchmark.runner — ✓ [442/500] mixed_real_0472 TTFT=289610ms E2E=291485ms tokens=46 status=ok
+21:31:34 INFO    benchmark.runner — ✓ [443/500] mixed_real_0475 TTFT=286916ms E2E=289395ms tokens=61 status=ok
+21:31:34 INFO    benchmark.runner — ✓ [444/500] mixed_real_0474 TTFT=287250ms E2E=289851ms tokens=64 status=ok
+21:31:34 INFO    benchmark.runner — ✓ [445/500] mixed_real_0477 TTFT=286595ms E2E=289196ms tokens=64 status=ok
+21:31:34 INFO    benchmark.runner — ✓ [446/500] mixed_real_0479 TTFT=285902ms E2E=288859ms tokens=73 status=ok
+21:31:34 INFO    benchmark.runner — ✓ [447/500] mixed_real_0469 TTFT=289556ms E2E=295079ms tokens=130 status=ok
+21:31:35 INFO    benchmark.runner — ✓ [448/500] mixed_real_0461 TTFT=289643ms E2E=299375ms tokens=234 status=ok
+21:31:36 INFO    benchmark.runner — ✓ [449/500] mixed_real_0436 TTFT=270720ms E2E=309941ms tokens=978 status=ok
+21:31:38 INFO    benchmark.runner — ✓ [450/500] mixed_real_0471 TTFT=291120ms E2E=297751ms tokens=166 status=ok
+21:31:38 INFO    benchmark.runner —   Progress: 450/500 completed (450 ok, 0 errors)
+21:31:38 INFO    benchmark.runner — ✓ [451/500] mixed_real_0480 TTFT=286941ms E2E=292445ms tokens=140 status=ok
+21:31:39 INFO    benchmark.runner — ✓ [452/500] mixed_real_0463 TTFT=289642ms E2E=302694ms tokens=318 status=ok
+21:31:41 INFO    benchmark.runner — ✓ [453/500] mixed_real_0487 TTFT=288075ms E2E=290065ms tokens=51 status=ok
+21:31:41 INFO    benchmark.runner — ✓ [454/500] mixed_real_0484 TTFT=291691ms E2E=294133ms tokens=62 status=ok
+21:31:41 INFO    benchmark.runner — ✓ [455/500] mixed_real_0483 TTFT=291827ms E2E=294667ms tokens=72 status=ok
+21:31:43 INFO    benchmark.runner — ✓ [456/500] mixed_real_0485 TTFT=291558ms E2E=296393ms tokens=122 status=ok
+21:31:45 INFO    benchmark.runner — ✓ [457/500] mixed_real_0473 TTFT=288790ms E2E=302642ms tokens=348 status=ok
+21:31:45 INFO    benchmark.runner — ✓ [458/500] mixed_real_0438 TTFT=273792ms E2E=317232ms tokens=1087 status=ok
+21:31:46 INFO    benchmark.runner — ✓ [459/500] mixed_real_0478 TTFT=285905ms E2E=300793ms tokens=369 status=ok
+21:31:47 INFO    benchmark.runner — ✓ [460/500] mixed_real_0489 TTFT=292226ms E2E=294024ms tokens=46 status=ok
+21:31:47 INFO    benchmark.runner —   Progress: 460/500 completed (460 ok, 0 errors)
+21:31:48 INFO    benchmark.runner — ✓ [461/500] mixed_real_0488 TTFT=294631ms E2E=297141ms tokens=64 status=ok
+21:31:48 INFO    benchmark.runner — ✓ [462/500] mixed_real_0486 TTFT=290389ms E2E=299821ms tokens=234 status=ok
+21:31:48 INFO    benchmark.runner — ✓ [463/500] mixed_real_0490 TTFT=291963ms E2E=294710ms tokens=70 status=ok
+21:31:48 INFO    benchmark.runner — ✓ [464/500] mixed_real_0460 TTFT=289424ms E2E=312556ms tokens=567 status=ok
+21:31:51 INFO    benchmark.runner — ✓ [465/500] mixed_real_0214 TTFT=30843ms E2E=353843ms tokens=8014 status=ok
+21:31:51 INFO    benchmark.runner — ✓ [466/500] mixed_real_0467 TTFT=290433ms E2E=312852ms tokens=546 status=ok
+21:31:51 INFO    benchmark.runner — ✓ [467/500] mixed_real_0493 TTFT=291882ms E2E=294864ms tokens=74 status=ok
+21:31:52 INFO    benchmark.runner — ✓ [468/500] mixed_real_0464 TTFT=289785ms E2E=315464ms tokens=629 status=ok
+21:31:53 INFO    benchmark.runner — ✓ [469/500] mixed_real_0499 TTFT=290643ms E2E=291791ms tokens=31 status=ok
+21:31:58 INFO    benchmark.runner — ✓ [470/500] mixed_real_0242 TTFT=34123ms E2E=356835ms tokens=7985 status=ok
+21:31:58 INFO    benchmark.runner —   Progress: 470/500 completed (470 ok, 0 errors)
+21:31:59 INFO    benchmark.runner — ✓ [471/500] mixed_real_0233 TTFT=34292ms E2E=358523ms tokens=8025 status=ok
+21:31:59 INFO    benchmark.runner — ✓ [472/500] mixed_real_0496 TTFT=291468ms E2E=299159ms tokens=201 status=ok
+21:32:04 INFO    benchmark.runner — ✓ [473/500] mixed_real_0498 TTFT=290784ms E2E=302584ms tokens=317 status=ok
+21:32:10 INFO    benchmark.runner — ✓ [474/500] mixed_real_0495 TTFT=292681ms E2E=311391ms tokens=504 status=ok
+21:32:10 INFO    benchmark.runner — ✓ [475/500] mixed_real_0476 TTFT=286789ms E2E=325850ms tokens=1005 status=ok
+21:32:17 INFO    benchmark.runner — ✓ [476/500] mixed_real_0262 TTFT=49038ms E2E=372239ms tokens=7947 status=ok
+21:32:19 INFO    benchmark.runner — ✓ [477/500] mixed_real_0355 TTFT=182911ms E2E=360980ms tokens=4264 status=ok
+21:32:24 INFO    benchmark.runner — ✓ [478/500] mixed_real_0481 TTFT=287352ms E2E=338183ms tokens=1333 status=ok
+21:32:27 INFO    benchmark.runner — ✓ [479/500] mixed_real_0452 TTFT=278985ms E2E=353911ms tokens=1943 status=ok
+21:32:36 INFO    benchmark.runner — ✓ [480/500] mixed_real_0276 TTFT=63525ms E2E=388871ms tokens=7987 status=ok
+21:32:36 INFO    benchmark.runner —   Progress: 480/500 completed (480 ok, 0 errors)
+21:32:40 INFO    benchmark.runner — ✓ [481/500] mixed_real_0492 TTFT=293592ms E2E=344708ms tokens=1388 status=ok
+21:32:42 INFO    benchmark.runner — ✓ [482/500] mixed_real_0301 TTFT=91839ms E2E=392332ms tokens=7315 status=ok
+21:32:46 INFO    benchmark.runner — ✓ [483/500] mixed_real_0491 TTFT=293830ms E2E=351549ms tokens=1574 status=ok
+21:32:50 INFO    benchmark.runner — ✓ [484/500] mixed_real_0300 TTFT=88145ms E2E=400229ms tokens=7646 status=ok
+21:32:50 INFO    benchmark.runner — ✓ [485/500] mixed_real_0458 TTFT=285339ms E2E=374574ms tokens=2373 status=ok
+21:33:06 INFO    benchmark.runner — ✓ [486/500] mixed_real_0453 TTFT=281577ms E2E=392407ms tokens=3019 status=ok
+21:33:19 INFO    benchmark.runner — ✓ [487/500] mixed_real_0325 TTFT=154793ms E2E=425586ms tokens=6786 status=ok
+21:33:40 INFO    benchmark.runner — ✓ [488/500] mixed_real_0370 TTFT=216442ms E2E=440035ms tokens=5861 status=ok
+21:33:43 INFO    benchmark.runner — ✓ [489/500] mixed_real_0456 TTFT=280260ms E2E=428160ms tokens=4158 status=ok
+21:33:47 INFO    benchmark.runner — ✓ [490/500] mixed_real_0439 TTFT=273758ms E2E=439383ms tokens=4627 status=ok
+21:33:47 INFO    benchmark.runner —   Progress: 490/500 completed (490 ok, 0 errors)
+21:34:19 INFO    benchmark.runner — ✓ [491/500] mixed_real_0421 TTFT=271753ms E2E=474075ms tokens=5738 status=ok
+21:35:08 INFO    benchmark.runner — ✓ [492/500] mixed_real_0418 TTFT=267999ms E2E=523310ms tokens=7317 status=ok
+21:35:16 INFO    benchmark.runner — ✓ [493/500] mixed_real_0403 TTFT=253717ms E2E=532885ms tokens=7928 status=ok
+21:35:20 INFO    benchmark.runner — ✓ [494/500] mixed_real_0405 TTFT=254453ms E2E=536411ms tokens=8024 status=ok
+21:35:25 INFO    benchmark.runner — ✓ [495/500] mixed_real_0406 TTFT=262820ms E2E=541624ms tokens=8000 status=ok
+21:35:27 INFO    benchmark.runner — ✓ [496/500] mixed_real_0414 TTFT=265371ms E2E=542590ms tokens=7986 status=ok
+21:35:32 INFO    benchmark.runner — ✓ [497/500] mixed_real_0424 TTFT=271702ms E2E=546626ms tokens=7997 status=ok
+21:35:56 INFO    benchmark.runner — ✓ [498/500] mixed_real_0482 TTFT=292302ms E2E=550231ms tokens=7896 status=ok
+21:36:00 INFO    benchmark.runner — ✓ [499/500] mixed_real_0497 TTFT=291809ms E2E=540230ms tokens=7729 status=ok
+21:36:07 INFO    benchmark.runner — ✓ [500/500] mixed_real_0494 TTFT=292713ms E2E=548299ms tokens=8032 status=ok
+21:36:07 INFO    benchmark.runner —   Progress: 500/500 completed (500 ok, 0 errors)
+21:36:10 INFO    benchmark.gpu_monitor — GPU monitor stopped. 638 samples collected.
+21:36:10 INFO    benchmark.gpu_monitor — GPU summary — util: 99.7% mean / 100.0% p95 | mem: 92.2% mean | power: 283W mean / 322W peak
+21:36:10 INFO    benchmark.runner — Benchmark [baseline_full_fp16_tp1] x [mixed_real] complete: 500/500 ok, wall=639.8s
+21:36:10 INFO    benchmark.runner —   TTFT P95=289641ms  E2E P95=353843ms  TPS=28.8
+21:36:10 INFO    benchmark.engines.base — Stopping tensorrtllm [baseline_full_fp16_tp1] (port 8100)
+21:36:10 INFO    benchmark.engines.base — === System state [before-stop:baseline_full_fp16_tp1] ===
+  Port 8100: BOUND — LISTEN 0      2048       127.0.0.1:8100      0.0.0.0:*    users:(("trtllm-serve",pid=56581,fd=47))
+  'trtllm-serve' processes (1):
+    56581 /home/ubuntu/projects/InferenceBench/.venv-trtllm/bin/python3 /home/ubuntu/projects/InferenceBench/.venv-trtllm/bi
+  GPU 0: 41872 MiB used / 46068 MiB total (3586 MiB free)
+21:36:11 INFO    benchmark.engines — Killed stale GPU worker PID 56748 (17214 MiB, comm=python3)
+21:36:13 INFO    benchmark.engines.base — === System state [after-stop:baseline_full_fp16_tp1] ===
+  Port 8100: FREE
+  GPU 0: 3 MiB used / 46068 MiB total (45455 MiB free)
+21:36:13 INFO    benchmark.engines.base — tensorrtllm [baseline_full_fp16_tp1] stopped.
+21:36:13 INFO    benchmark.main — 
+Generating report...
+21:36:13 INFO    benchmark.analysis.report — Saved results/l40s_fairness/l40s_fair__llama31_8b__tensorrt-llm__default__c256_s256/figures/ttft_cdf.pdf
+21:36:13 INFO    benchmark.analysis.report — Saved results/l40s_fairness/l40s_fair__llama31_8b__tensorrt-llm__default__c256_s256/figures/dominance_heatmap.pdf
+/home/ubuntu/projects/InferenceBench/benchmark/analysis/report.py:188: UserWarning: set_ticklabels() should only be used with a fixed number of ticks, i.e. after set_ticks() or using a FixedLocator. Otherwise, ticks may be mislabeled.
+  ax.set_xticklabels(ax.get_xticklabels(), rotation=35, ha="right", fontsize=7)
+21:36:13 INFO    benchmark.analysis.report — Saved results/l40s_fairness/l40s_fair__llama31_8b__tensorrt-llm__default__c256_s256/figures/ttft_boxplot.pdf
+/home/ubuntu/projects/InferenceBench/benchmark/analysis/report.py:188: UserWarning: set_ticklabels() should only be used with a fixed number of ticks, i.e. after set_ticks() or using a FixedLocator. Otherwise, ticks may be mislabeled.
+  ax.set_xticklabels(ax.get_xticklabels(), rotation=35, ha="right", fontsize=7)
+21:36:14 INFO    benchmark.analysis.report — Saved results/l40s_fairness/l40s_fair__llama31_8b__tensorrt-llm__default__c256_s256/figures/e2e_boxplot.pdf
+21:36:14 INFO    benchmark.analysis.report — Saved results/l40s_fairness/l40s_fair__llama31_8b__tensorrt-llm__default__c256_s256/figures/tps_by_output_length.pdf
+21:36:14 INFO    benchmark.analysis.report — Saved results/l40s_fairness/l40s_fair__llama31_8b__tensorrt-llm__default__c256_s256/tables/summary.tex
+21:36:14 INFO    benchmark.analysis.report — Saved results/l40s_fairness/l40s_fair__llama31_8b__tensorrt-llm__default__c256_s256/tables/efficiency.tex
+21:36:14 INFO    benchmark.analysis.report — Saved results/l40s_fairness/l40s_fair__llama31_8b__tensorrt-llm__default__c256_s256/tables/interactions.tex
+21:36:14 INFO    benchmark.analysis.report — Report generated: 8 artifacts.
+21:36:14 INFO    benchmark.analysis.cost_model — Analysis saved to results/l40s_fairness/l40s_fair__llama31_8b__tensorrt-llm__default__c256_s256/analysis
+21:36:14 INFO    benchmark.analysis.cost_model — Loaded 1000 successful requests from results/l40s_fairness/l40s_fair__llama31_8b__tensorrt-llm__default__c256_s256/requests.csv covering 1 strategies.
+21:36:15 INFO    benchmark.analysis.cost_model — [baseline_full_fp16_tp1] fitted on 1000 samples — TTFT MAPE=28780.1%  E2E MAPE=1186.3%
+21:36:15 INFO    benchmark.main — 
+Cost model fitted for 1 strategies.
+21:36:15 INFO    benchmark.main — 
+Done. Results: results/l40s_fairness/l40s_fair__llama31_8b__tensorrt-llm__default__c256_s256
+21:36:15 INFO    benchmark.main — Artifacts: 8 files generated.
+
+✓ Results saved to: results/l40s_fairness/l40s_fair__llama31_8b__tensorrt-llm__default__c256_s256

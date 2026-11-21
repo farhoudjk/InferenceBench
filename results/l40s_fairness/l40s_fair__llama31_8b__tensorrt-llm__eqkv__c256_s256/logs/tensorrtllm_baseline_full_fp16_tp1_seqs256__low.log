@@ -1,0 +1,742 @@
+<frozen importlib._bootstrap_external>:1297: FutureWarning: The cuda.cuda module is deprecated and will be removed in a future release, please switch to use the cuda.bindings.driver module instead.
+<frozen importlib._bootstrap_external>:1297: FutureWarning: The cuda.cudart module is deprecated and will be removed in a future release, please switch to use the cuda.bindings.runtime module instead.
+[2026-11-20 22:35:45] INFO config.py:54: PyTorch version 2.7.1+cu128 available.
+/home/ubuntu/projects/InferenceBench/.venv-trtllm/lib/python3.12/site-packages/peft/import_utils.py:52: FutureWarning: Support for Transformers < 5.6 is deprecated in PEFT and will be removed in the next release, v1.0. You have Transformers 4.53.1. Please upgrade to Transformers >= 5.6.
+  warnings.warn(
+2026-11-20 22:35:48,487 - INFO - flashinfer.jit: Prebuilt kernels not found, using JIT backend
+[TensorRT-LLM] TensorRT LLM version: 1.0.0
+/home/ubuntu/projects/InferenceBench/.venv-trtllm/lib/python3.12/site-packages/tensorrt_llm/serve/openai_protocol.py:84: UserWarning: Field name "schema" in "ResponseFormat" shadows an attribute in parent "OpenAIBaseModel"
+  class ResponseFormat(OpenAIBaseModel):
+[11/20/2026-22:35:49] [TRT-LLM] [I] Using LLM with PyTorch backend
+[11/20/2026-22:35:49] [TRT-LLM] [I] Set nccl_plugin to None.
+[11/20/2026-22:35:49] [TRT-LLM] [I] neither checkpoint_format nor checkpoint_loader were provided, checkpoint_format will be set to HF.
+/home/ubuntu/projects/InferenceBench/.venv-trtllm/lib/python3.12/site-packages/torch/utils/cpp_extension.py:2356: UserWarning: TORCH_CUDA_ARCH_LIST is not set, all archs for visible cards are included for compilation. 
+If this is not desired, please set os.environ['TORCH_CUDA_ARCH_LIST'].
+  warnings.warn(
+[11/20/2026-22:35:49] [TRT-LLM] [I] PyTorchConfig(extra_resource_managers={}, use_cuda_graph=True, cuda_graph_batch_sizes=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 64, 128], cuda_graph_max_batch_size=128, cuda_graph_padding_enabled=False, disable_overlap_scheduler=False, moe_max_num_tokens=None, moe_load_balancer=None, attention_dp_enable_balance=False, attention_dp_time_out_iters=50, attention_dp_batching_wait_iters=10, attn_backend='TRTLLM', moe_backend='CUTLASS', enable_mixed_sampler=False, enable_trtllm_sampler=False, kv_cache_dtype='auto', enable_iter_perf_stats=True, enable_iter_req_stats=False, print_iter_log=False, torch_compile_enabled=False, torch_compile_fullgraph=True, torch_compile_inductor_enabled=False, torch_compile_piecewise_cuda_graph=False, torch_compile_enable_userbuffers=True, torch_compile_max_num_streams=1, enable_autotuner=True, enable_layerwise_nvtx_marker=False, load_format=<LoadFormat.AUTO: 0>, enable_min_latency=False, allreduce_strategy='AUTO', stream_interval=1, force_dynamic_quantization=False, _limit_torch_cuda_mem_fraction=True)
+[33;20mrank 0 using MpiPoolSession to spawn MPI processes
+[0m[11/20/2026-22:35:49] [TRT-LLM] [I] Generating a new HMAC key for server proxy_request_queue
+[11/20/2026-22:35:49] [TRT-LLM] [I] Generating a new HMAC key for server worker_init_status_queue
+[11/20/2026-22:35:49] [TRT-LLM] [I] Generating a new HMAC key for server proxy_result_queue
+[11/20/2026-22:35:49] [TRT-LLM] [I] Generating a new HMAC key for server proxy_stats_queue
+[11/20/2026-22:35:49] [TRT-LLM] [I] Generating a new HMAC key for server proxy_kv_cache_events_queue
+<frozen importlib._bootstrap_external>:1297: FutureWarning: The cuda.cuda module is deprecated and will be removed in a future release, please switch to use the cuda.bindings.driver module instead.
+<frozen importlib._bootstrap_external>:1297: FutureWarning: The cuda.cudart module is deprecated and will be removed in a future release, please switch to use the cuda.bindings.runtime module instead.
+[2026-11-20 22:35:55] INFO config.py:54: PyTorch version 2.7.1+cu128 available.
+Multiple distributions found for package optimum. Picked distribution: optimum
+Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+/home/ubuntu/projects/InferenceBench/.venv-trtllm/lib/python3.12/site-packages/peft/import_utils.py:52: FutureWarning: Support for Transformers < 5.6 is deprecated in PEFT and will be removed in the next release, v1.0. You have Transformers 4.53.1. Please upgrade to Transformers >= 5.6.
+  warnings.warn(
+2026-11-20 22:35:58,999 - INFO - flashinfer.jit: Prebuilt kernels not found, using JIT backend
+[TensorRT-LLM] TensorRT LLM version: 1.0.0
+/home/ubuntu/projects/InferenceBench/.venv-trtllm/lib/python3.12/site-packages/tensorrt_llm/serve/openai_protocol.py:84: UserWarning: Field name "schema" in "ResponseFormat" shadows an attribute in parent "OpenAIBaseModel"
+  class ResponseFormat(OpenAIBaseModel):
+/home/ubuntu/projects/InferenceBench/.venv-trtllm/lib/python3.12/site-packages/torch/utils/cpp_extension.py:2356: UserWarning: TORCH_CUDA_ARCH_LIST is not set, all archs for visible cards are included for compilation. 
+If this is not desired, please set os.environ['TORCH_CUDA_ARCH_LIST'].
+  warnings.warn(
+[TensorRT-LLM][INFO] Refreshed the MPI local session
+[11/20/2026-22:35:59] [TRT-LLM] [I] ATTENTION RUNTIME FEATURES:  AttentionRuntimeFeatures(chunked_prefill=False, cache_reuse=True, has_speculative_draft_tokens=False, chunk_size=8192)
+[11/20/2026-22:35:59] [TRT-LLM] [I] Validating KV Cache config against kv_cache_dtype="auto"
+[11/20/2026-22:35:59] [TRT-LLM] [I] KV cache quantization set to "auto". Using checkpoint KV quantization.
+[11/20/2026-22:36:00] [TRT-LLM] [I] Use 14.96 GB for model weights.
+[11/20/2026-22:36:00] [TRT-LLM] [I] Prefetching 14.96GB checkpoint files.
+[11/20/2026-22:36:00] [TRT-LLM] [I] Prefetching /home/ubuntu/.cache/huggingface/hub/models--meta-llama--Llama-3.1-8B-Instruct/snapshots/0e9e39f249a16976918f6564b8830bc894c89659/model-00004-of-00004.safetensors to memory...
+[11/20/2026-22:36:00] [TRT-LLM] [I] Prefetching /home/ubuntu/.cache/huggingface/hub/models--meta-llama--Llama-3.1-8B-Instruct/snapshots/0e9e39f249a16976918f6564b8830bc894c89659/model-00001-of-00004.safetensors to memory...
+[11/20/2026-22:36:00] [TRT-LLM] [I] Prefetching /home/ubuntu/.cache/huggingface/hub/models--meta-llama--Llama-3.1-8B-Instruct/snapshots/0e9e39f249a16976918f6564b8830bc894c89659/model-00003-of-00004.safetensors to memory...
+[11/20/2026-22:36:00] [TRT-LLM] [I] Prefetching /home/ubuntu/.cache/huggingface/hub/models--meta-llama--Llama-3.1-8B-Instruct/snapshots/0e9e39f249a16976918f6564b8830bc894c89659/model-00002-of-00004.safetensors to memory...
+[11/20/2026-22:36:00] [TRT-LLM] [I] Finished prefetching /home/ubuntu/.cache/huggingface/hub/models--meta-llama--Llama-3.1-8B-Instruct/snapshots/0e9e39f249a16976918f6564b8830bc894c89659/model-00004-of-00004.safetensors.
+[11/20/2026-22:36:08] [TRT-LLM] [I] Finished prefetching /home/ubuntu/.cache/huggingface/hub/models--meta-llama--Llama-3.1-8B-Instruct/snapshots/0e9e39f249a16976918f6564b8830bc894c89659/model-00003-of-00004.safetensors.
+[11/20/2026-22:36:19] [TRT-LLM] [I] Finished prefetching /home/ubuntu/.cache/huggingface/hub/models--meta-llama--Llama-3.1-8B-Instruct/snapshots/0e9e39f249a16976918f6564b8830bc894c89659/model-00002-of-00004.safetensors.
+[11/20/2026-22:36:20] [TRT-LLM] [I] Finished prefetching /home/ubuntu/.cache/huggingface/hub/models--meta-llama--Llama-3.1-8B-Instruct/snapshots/0e9e39f249a16976918f6564b8830bc894c89659/model-00001-of-00004.safetensors.
+Loading safetensors weights in parallel:   0%|          | 0/4 [00:00<?, ?it/s]Loading safetensors weights in parallel: 100%|██████████| 4/4 [00:00<00:00, 60.02it/s]
+Loading weights:   0%|          | 0/649 [00:00<?, ?it/s]Loading weights:   0%|          | 3/649 [00:02<08:18,  1.30it/s]Loading weights:   6%|▌         | 39/649 [00:02<00:27, 22.12it/s]Loading weights:  15%|█▍        | 97/649 [00:02<00:08, 64.45it/s]Loading weights:  21%|██▏       | 139/649 [00:02<00:05, 98.46it/s]Loading weights:  30%|███       | 197/649 [00:02<00:02, 155.92it/s]Loading weights:  38%|███▊      | 248/649 [00:02<00:01, 206.75it/s]Loading weights:  46%|████▌     | 297/649 [00:02<00:01, 253.78it/s]Loading weights:  53%|█████▎    | 343/649 [00:05<00:05, 57.56it/s] Loading weights:  58%|█████▊    | 375/649 [00:07<00:08, 32.91it/s]Loading weights:  61%|██████▏   | 398/649 [00:10<00:11, 21.14it/s]Loading weights:  64%|██████▍   | 414/649 [00:10<00:10, 23.39it/s]Loading weights:  71%|███████   | 459/649 [00:10<00:05, 37.18it/s]Loading weights:  77%|███████▋  | 497/649 [00:10<00:02, 52.24it/s]Loading weights:  84%|████████▍ | 548/649 [00:10<00:01, 79.37it/s]Loading weights:  91%|█████████ | 588/649 [00:10<00:00, 98.21it/s]Loading weights:  95%|█████████▌| 618/649 [00:12<00:00, 52.78it/s]Loading weights: 100%|█████████▉| 647/649 [00:12<00:00, 64.97it/s]Loading weights: 100%|██████████| 649/649 [00:12<00:00, 51.86it/s]
+Model init total -- 33.26s
+[11/20/2026-22:36:33] [TRT-LLM] [I] max_tokens is set by kv_cache_config.max_tokens: 8256
+[TensorRT-LLM][INFO] Number of tokens per block: 32.
+[TensorRT-LLM][INFO] [MemUsageChange] Allocated 1.01 GiB for max tokens in paged KV cache (8256).
+[11/20/2026-22:36:33] [TRT-LLM] [I] max_seq_len=8193, max_num_requests=256, max_num_tokens=8192, max_batch_size=256
+[11/20/2026-22:36:33] [TRT-LLM] [I] cache_transceiver is disabled
+[11/20/2026-22:36:33] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:33] [TRT-LLM] [I] [Autotuner] Autotuning process starts ...
+2026-11-20 22:36:35,965 - INFO - flashinfer.jit: Loading JIT ops: norm
+/home/ubuntu/projects/InferenceBench/.venv-trtllm/lib/python3.12/site-packages/torch/utils/cpp_extension.py:2356: UserWarning: TORCH_CUDA_ARCH_LIST is not set, all archs for visible cards are included for compilation. 
+If this is not desired, please set os.environ['TORCH_CUDA_ARCH_LIST'].
+  warnings.warn(
+/home/ubuntu/projects/InferenceBench/.venv-trtllm/lib/python3.12/site-packages/torch/utils/cpp_extension.py:2356: UserWarning: TORCH_CUDA_ARCH_LIST is not set, all archs for visible cards are included for compilation. 
+If this is not desired, please set os.environ['TORCH_CUDA_ARCH_LIST'].
+  warnings.warn(
+2026-11-20 22:36:36,052 - INFO - flashinfer.jit: Finished loading JIT ops: norm
+[11/20/2026-22:36:37] [TRT-LLM] [I] [Autotuner] Cache size after warmup is 0
+[11/20/2026-22:36:37] [TRT-LLM] [I] [Autotuner] Autotuning process ends
+[11/20/2026-22:36:37] [TRT-LLM] [I] Creating CUDA graph instances for 34 batch sizes.
+[11/20/2026-22:36:37] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=128, draft_len=0
+[11/20/2026-22:36:37] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:38] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=64, draft_len=0
+[11/20/2026-22:36:38] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:38] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=32, draft_len=0
+[11/20/2026-22:36:38] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:39] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=31, draft_len=0
+[11/20/2026-22:36:39] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:39] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=30, draft_len=0
+[11/20/2026-22:36:39] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:39] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=29, draft_len=0
+[11/20/2026-22:36:39] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:40] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=28, draft_len=0
+[11/20/2026-22:36:40] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:40] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=27, draft_len=0
+[11/20/2026-22:36:40] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:40] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=26, draft_len=0
+[11/20/2026-22:36:40] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:41] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=25, draft_len=0
+[11/20/2026-22:36:41] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:41] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=24, draft_len=0
+[11/20/2026-22:36:41] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:41] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=23, draft_len=0
+[11/20/2026-22:36:41] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:42] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=22, draft_len=0
+[11/20/2026-22:36:42] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:42] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=21, draft_len=0
+[11/20/2026-22:36:42] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:42] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=20, draft_len=0
+[11/20/2026-22:36:42] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:43] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=19, draft_len=0
+[11/20/2026-22:36:43] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:43] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=18, draft_len=0
+[11/20/2026-22:36:43] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:43] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=17, draft_len=0
+[11/20/2026-22:36:43] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:44] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=16, draft_len=0
+[11/20/2026-22:36:44] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:44] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=15, draft_len=0
+[11/20/2026-22:36:44] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:45] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=14, draft_len=0
+[11/20/2026-22:36:45] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:45] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=13, draft_len=0
+[11/20/2026-22:36:45] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:45] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=12, draft_len=0
+[11/20/2026-22:36:45] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:46] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=11, draft_len=0
+[11/20/2026-22:36:46] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:46] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=10, draft_len=0
+[11/20/2026-22:36:46] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:46] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=9, draft_len=0
+[11/20/2026-22:36:46] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:47] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=8, draft_len=0
+[11/20/2026-22:36:47] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:47] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=7, draft_len=0
+[11/20/2026-22:36:47] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:47] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=6, draft_len=0
+[11/20/2026-22:36:47] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:48] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=5, draft_len=0
+[11/20/2026-22:36:48] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:48] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=4, draft_len=0
+[11/20/2026-22:36:48] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:48] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=3, draft_len=0
+[11/20/2026-22:36:48] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:49] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=2, draft_len=0
+[11/20/2026-22:36:49] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:49] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=1, draft_len=0
+[11/20/2026-22:36:49] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:50] [TRT-LLM] [I] Memory used after loading model weights (inside torch) in memory usage profiling: 15.04 GiB
+[11/20/2026-22:36:50] [TRT-LLM] [I] Memory used after loading model weights (outside torch) in memory usage profiling: 3.20 GiB
+[11/20/2026-22:36:50] [TRT-LLM] [I] Memory dynamically allocated during inference (inside torch) in memory usage profiling: 0.91 GiB
+[11/20/2026-22:36:50] [TRT-LLM] [I] Memory used outside torch (e.g., NCCL and CUDA graphs) in memory usage profiling: 3.20 GiB
+[11/20/2026-22:36:50] [TRT-LLM] [I] Peak memory during memory usage profiling (torch + non-torch): 19.15 GiB, available KV cache memory when calculating max tokens: 23.62 GiB, fraction is set 0.9, kv size is 131072. device total memory 44.39 GiB, , tmp kv_mem 1.01 GiB
+[11/20/2026-22:36:50] [TRT-LLM] [I] Estimated max tokens in KV cache : 193506
+[11/20/2026-22:36:50] [TRT-LLM] [I] max_tokens is set by kv_cache_config.max_tokens: 193506
+[TensorRT-LLM][INFO] Number of tokens per block: 32.
+[TensorRT-LLM][INFO] [MemUsageChange] Allocated 23.62 GiB for max tokens in paged KV cache (193536).
+[11/20/2026-22:36:50] [TRT-LLM] [I] max_seq_len=8193, max_num_requests=256, max_num_tokens=8192, max_batch_size=256
+[11/20/2026-22:36:50] [TRT-LLM] [I] cache_transceiver is disabled
+[11/20/2026-22:36:50] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:50] [TRT-LLM] [I] [Autotuner] Autotuning process starts ...
+[11/20/2026-22:36:51] [TRT-LLM] [I] [Autotuner] Cache size after warmup is 0
+[11/20/2026-22:36:51] [TRT-LLM] [I] [Autotuner] Autotuning process ends
+[11/20/2026-22:36:51] [TRT-LLM] [I] Creating CUDA graph instances for 34 batch sizes.
+[11/20/2026-22:36:51] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=128, draft_len=0
+[11/20/2026-22:36:51] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:51] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=64, draft_len=0
+[11/20/2026-22:36:51] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:52] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=32, draft_len=0
+[11/20/2026-22:36:52] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:52] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=31, draft_len=0
+[11/20/2026-22:36:52] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:52] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=30, draft_len=0
+[11/20/2026-22:36:52] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:53] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=29, draft_len=0
+[11/20/2026-22:36:53] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:53] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=28, draft_len=0
+[11/20/2026-22:36:53] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:53] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=27, draft_len=0
+[11/20/2026-22:36:53] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:54] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=26, draft_len=0
+[11/20/2026-22:36:54] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:54] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=25, draft_len=0
+[11/20/2026-22:36:54] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:55] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=24, draft_len=0
+[11/20/2026-22:36:55] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:55] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=23, draft_len=0
+[11/20/2026-22:36:55] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:55] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=22, draft_len=0
+[11/20/2026-22:36:55] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:56] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=21, draft_len=0
+[11/20/2026-22:36:56] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:56] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=20, draft_len=0
+[11/20/2026-22:36:56] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:56] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=19, draft_len=0
+[11/20/2026-22:36:56] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:57] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=18, draft_len=0
+[11/20/2026-22:36:57] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:57] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=17, draft_len=0
+[11/20/2026-22:36:57] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:57] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=16, draft_len=0
+[11/20/2026-22:36:57] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:58] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=15, draft_len=0
+[11/20/2026-22:36:58] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:58] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=14, draft_len=0
+[11/20/2026-22:36:58] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:58] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=13, draft_len=0
+[11/20/2026-22:36:58] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:59] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=12, draft_len=0
+[11/20/2026-22:36:59] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:59] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=11, draft_len=0
+[11/20/2026-22:36:59] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:36:59] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=10, draft_len=0
+[11/20/2026-22:36:59] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:37:00] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=9, draft_len=0
+[11/20/2026-22:37:00] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:37:00] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=8, draft_len=0
+[11/20/2026-22:37:00] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:37:00] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=7, draft_len=0
+[11/20/2026-22:37:00] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:37:01] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=6, draft_len=0
+[11/20/2026-22:37:01] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:37:01] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=5, draft_len=0
+[11/20/2026-22:37:01] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:37:02] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=4, draft_len=0
+[11/20/2026-22:37:02] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:37:02] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=3, draft_len=0
+[11/20/2026-22:37:02] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:37:02] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=2, draft_len=0
+[11/20/2026-22:37:02] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:37:03] [TRT-LLM] [I] Run generation only CUDA graph warmup for batch size=1, draft_len=0
+[11/20/2026-22:37:03] [TRT-LLM] [I] Detected use_mrope: False
+[11/20/2026-22:37:03] [TRT-LLM] [W] It is recommended to incl. 'garbage_collection_threshold:0.???' or 'backend:cudaMallocAsync' or 'expandable_segments:True' in PYTORCH_CUDA_ALLOC_CONF.
+[11/20/2026-22:37:03] [TRT-LLM] [I] Setting PyTorch memory fraction to 0.44190529353614155 (19.61712646484375 GiB)
+INFO:     Started server process [87748]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8100 (Press CTRL+C to quit)
+INFO:     127.0.0.1:34056 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34056 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34060 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34070 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34076 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34080 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34090 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34094 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34090 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34076 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34070 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35158 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34094 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35162 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35172 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35176 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34076 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34090 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35172 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35186 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34094 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35194 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34090 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35194 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35186 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35200 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34080 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35208 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35220 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35226 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35200 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35208 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34080 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35200 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55010 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35208 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34080 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35200 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34080 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35208 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35220 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35200 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55010 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34094 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35200 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55018 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55028 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55040 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55050 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55058 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55018 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35220 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55058 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55072 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55080 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35220 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55040 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55080 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55050 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55072 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34080 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55050 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35162 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34080 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55050 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45922 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55058 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35208 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45922 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45934 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45946 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45954 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45956 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45934 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45954 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45956 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35200 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55010 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35208 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55010 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38526 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38532 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38548 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35172 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38556 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45934 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38556 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38570 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38556 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38570 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55010 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45946 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38572 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38588 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38572 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45956 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45934 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38570 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34094 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38556 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55072 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45946 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35162 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34094 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55018 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38556 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38570 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45922 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57078 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57086 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45946 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38570 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38556 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34094 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35208 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57086 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45946 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35162 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45946 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57086 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45946 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44660 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35208 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57078 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38556 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44672 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44676 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44692 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44696 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35162 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44660 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44676 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38526 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35162 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44672 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44672 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48176 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48180 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48194 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48208 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48176 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48210 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48218 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48176 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44672 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48194 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48176 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48208 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48218 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38570 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39730 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39746 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39730 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38556 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48210 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39752 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39764 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39780 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39792 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39806 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39808 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39812 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39826 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48210 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39842 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39826 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39792 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39842 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39808 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38556 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39826 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39846 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52430 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48218 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52438 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39792 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39730 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48218 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52442 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52458 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52460 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52470 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52474 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48180 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39730 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52442 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52458 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52474 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52460 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52488 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52492 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52492 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52430 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52504 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52514 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35404 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35420 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48218 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35428 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35442 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52460 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52504 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35404 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39806 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52514 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52504 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45956 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35428 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52460 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35404 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39806 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52504 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52460 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35428 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52514 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48194 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35404 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35442 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35428 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52460 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52442 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52514 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52458 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49298 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49302 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52514 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49306 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49318 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49330 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49318 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49306 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44676 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49330 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49302 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49344 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49306 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49354 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49368 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49302 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49318 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38446 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38458 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38472 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38486 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52470 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38472 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38486 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49318 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52442 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52514 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49298 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38486 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38492 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38500 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38506 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38520 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49298 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38520 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48194 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49318 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38492 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38520 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38492 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49318 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48194 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38500 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41886 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38500 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38520 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44696 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38520 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49298 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41886 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38492 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34296 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34300 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34308 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34324 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34340 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34348 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34362 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34374 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34390 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34398 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38500 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34410 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34412 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34428 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41886 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38082 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38088 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38090 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38094 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38100 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38116 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38132 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39746 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35442 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38136 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38148 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38162 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34296 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34374 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34412 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34324 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45934 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34390 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34410 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38088 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34308 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38100 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38160 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38166 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38176 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38186 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38196 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38200 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38214 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38222 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38228 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38234 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38240 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38256 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38270 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38278 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60748 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60762 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60778 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60786 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34362 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60798 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60806 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60808 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60822 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60834 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60844 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38090 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41886 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38520 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60854 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59932 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59934 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59936 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59938 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59948 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59956 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59962 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59964 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59972 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59976 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38148 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59978 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38136 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35442 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34300 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59984 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34340 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38162 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45458 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45472 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45482 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45498 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45506 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38116 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45518 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45520 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45528 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45934 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39746 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45544 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45558 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45560 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38100 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45568 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45580 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45588 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45602 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45616 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60650 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60660 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60666 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60676 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60680 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60696 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60698 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60710 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60712 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60728 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60730 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60732 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60740 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60742 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60752 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60760 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60766 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60774 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60776 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60782 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60788 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60802 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60810 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60816 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36240 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36254 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36260 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36266 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36272 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36284 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36300 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36302 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36304 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36316 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38214 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36320 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36328 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36338 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36346 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36352 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36362 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36368 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36372 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36384 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36392 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36404 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36414 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36418 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36430 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36444 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36448 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36456 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45692 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44672 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45694 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45708 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45714 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38186 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45716 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45728 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38256 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38228 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45740 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45756 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45768 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45782 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45796 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44894 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44900 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44902 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60762 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44914 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49354 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44916 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60748 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38166 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44926 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44936 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44944 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44952 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44956 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44966 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44970 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44976 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44986 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45000 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45010 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45018 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46254 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46264 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46278 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46290 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46304 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46312 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46320 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46334 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46346 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46362 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46370 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46376 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46392 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46408 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38196 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46418 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46424 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46432 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46448 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34296 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60798 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60786 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60806 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60636 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38520 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38090 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60638 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60648 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44660 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60654 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60664 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60834 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59956 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60668 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60670 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60672 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46312 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+[11/20/2026-22:48:54] [TRT-LLM] [I] Thread proxy_dispatch_result_thread stopped.
+[11/20/2026-22:48:54] [TRT-LLM] [I] Thread proxy_dispatch_kv_cache_events_thread stopped.
+[11/20/2026-22:48:54] [TRT-LLM] [I] Thread proxy_dispatch_stats_thread stopped.
+[11/20/2026-22:48:54] [TRT-LLM] [I] Thread await_response_thread stopped.
+[11/20/2026-22:48:54] [TRT-LLM] [I] Thread dispatch_stats_thread stopped.
+[11/20/2026-22:48:55] [TRT-LLM] [I] Thread dispatch_kv_cache_events_thread stopped.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [87748]

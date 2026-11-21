@@ -1,0 +1,8 @@
+{
+  "baseline_full_fp16_tp1": {
+    "prompt": 0.28818298326965436,
+    "output_tokens": -0.014521590597319167,
+    "prompt+output_tokens": 0.2894145539762899,
+    "prompt+output_tokens+task_type_enc": 0.2891079104394286
+  }
+}

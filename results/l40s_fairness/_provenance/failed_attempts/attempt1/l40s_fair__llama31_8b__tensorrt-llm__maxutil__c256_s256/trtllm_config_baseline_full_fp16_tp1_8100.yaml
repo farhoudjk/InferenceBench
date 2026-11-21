@@ -1,0 +1,6 @@
+dtype: float16
+enable_iter_perf_stats: true
+kv_cache_config:
+  enable_block_reuse: true
+scheduler_config:
+  capacity_scheduler_policy: MAX_UTILIZATION

@@ -1,0 +1,59 @@
+20:06:36 INFO    benchmark.storage — ResultStore initialized at results/l40s_fairness/l40s_fair__llama31_8b__tensorrt-llm__maxutil__c256_s256
+/home/ubuntu/projects/Bench2/.venv/lib/python3.12/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+20:06:38 INFO    benchmark.main — Python:      /home/ubuntu/projects/Bench2/.venv/bin/python
+20:06:38 INFO    benchmark.main — PyTorch:     2.8.0+cu128
+20:06:38 INFO    benchmark.main — CUDA built:  12.8
+20:06:38 INFO    benchmark.main — CUDA avail:  True
+20:06:38 INFO    benchmark.main — GPU 0:       NVIDIA L40S (44.4 GiB)
+20:06:38 INFO    benchmark.main — Overriding max_num_seqs for [baseline_full_fp16_tp1]: 256 → 256
+20:06:38 INFO    benchmark.main — Overriding num_requests for [mixed_real]: 400 → 500
+20:06:38 INFO    benchmark.main — Run ID: l40s_fair__llama31_8b__tensorrt-llm__maxutil__c256_s256
+20:06:38 INFO    benchmark.main — Engine: tensorrtllm
+20:06:38 INFO    benchmark.main — Strategies: ['baseline_full_fp16_tp1']
+20:06:38 INFO    benchmark.main — Workloads:  ['mixed_real']
+20:06:38 INFO    benchmark.main — Rates:      ['low_poisson']
+20:06:38 INFO    benchmark.main — Results:    results/l40s_fairness/l40s_fair__llama31_8b__tensorrt-llm__maxutil__c256_s256
+20:06:38 INFO    benchmark.main — 
+============================================================
+[1/1] Strategy: baseline_full_fp16_tp1  Workload: mixed_real  Rate: low_poisson
+============================================================
+20:06:38 INFO    benchmark.gpu_monitor — GPU 0: NVIDIA L40S — 45.0 GiB total, 44.4 GiB free
+20:06:38 INFO    benchmark.gpu_monitor — pynvml initialized successfully.
+20:06:38 INFO    benchmark.engines.base — === System state [before-start:baseline_full_fp16_tp1] ===
+  Port 8100: FREE
+  GPU 0: 3 MiB used / 46068 MiB total (45455 MiB free)
+20:06:38 INFO    benchmark.engines.tensorrtllm_engine — [baseline_full_fp16_tp1] TRTLLM_EXTRA_LLM_API_OPTIONS merged: {"scheduler_config":{"capacity_scheduler_policy":"MAX_UTILIZATION"}}
+20:06:38 INFO    benchmark.engines.base — Launching tensorrtllm [baseline_full_fp16_tp1] on port 8100
+20:06:38 INFO    benchmark.engines.base — Python:  /home/ubuntu/projects/InferenceBench/.venv-trtllm/bin/python3
+20:06:38 INFO    benchmark.engines.base — Command: /home/ubuntu/projects/InferenceBench/.venv-trtllm/bin/trtllm-serve serve meta-llama/Llama-3.1-8B-Instruct --host 127.0.0.1 --port 8100 --backend pytorch --tp_size 1 --kv_cache_free_gpu_memory_fraction 0.9 --extra_llm_api_options results/l40s_fairness/l40s_fair__llama31_8b__tensorrt-llm__maxutil__c256_s256/trtllm_config_baseline_full_fp16_tp1_8100.yaml --max_batch_size 256 --max_num_tokens 8192 --max_seq_len 8192
+20:06:38 INFO    benchmark.engines.base — Log:     results/l40s_fairness/l40s_fair__llama31_8b__tensorrt-llm__maxutil__c256_s256/tensorrtllm_baseline_full_fp16_tp1_seqs256.log
+20:06:38 INFO    benchmark.engines.base — Waiting for tensorrtllm [baseline_full_fp16_tp1] (timeout: 500s) ...
+20:06:47 ERROR   benchmark.engines.base — tensorrtllm [baseline_full_fp16_tp1] process exited early (returncode=1)
+20:06:47 INFO    benchmark.engines.base — === System state [process-exited:baseline_full_fp16_tp1] ===
+  Port 8100: FREE
+  GPU 0: 3 MiB used / 46068 MiB total (45455 MiB free)
+20:06:47 INFO    benchmark.engines.base — Stopping tensorrtllm [baseline_full_fp16_tp1] (port 8100)
+20:06:47 INFO    benchmark.engines.base — === System state [before-stop:baseline_full_fp16_tp1] ===
+  Port 8100: FREE
+  GPU 0: 3 MiB used / 46068 MiB total (45455 MiB free)
+20:06:49 INFO    benchmark.engines.base — === System state [after-stop:baseline_full_fp16_tp1] ===
+  Port 8100: FREE
+  GPU 0: 3 MiB used / 46068 MiB total (45455 MiB free)
+20:06:49 INFO    benchmark.engines.base — tensorrtllm [baseline_full_fp16_tp1] stopped.
+20:06:49 ERROR   benchmark.main — Failed [baseline_full_fp16_tp1×mixed_real×low_poisson]: tensorrtllm instance [baseline_full_fp16_tp1] failed to start.
+Traceback (most recent call last):
+  File "/home/ubuntu/projects/InferenceBench/main.py", line 241, in run
+    instance = await engine.start(strategy, port=args.port)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/projects/InferenceBench/benchmark/engines/base.py", line 459, in start
+    raise RuntimeError(f"{self.name} instance [{strategy.name}] failed to start.")
+RuntimeError: tensorrtllm instance [baseline_full_fp16_tp1] failed to start.
+20:06:49 INFO    benchmark.main — 
+Generating report...
+20:06:49 WARNING benchmark.analysis.report — No data to report.
+20:06:49 INFO    benchmark.main — 
+Done. Results: results/l40s_fairness/l40s_fair__llama31_8b__tensorrt-llm__maxutil__c256_s256
+20:06:49 INFO    benchmark.main — Artifacts: 0 files generated.
+
+✓ Results saved to: results/l40s_fairness/l40s_fair__llama31_8b__tensorrt-llm__maxutil__c256_s256

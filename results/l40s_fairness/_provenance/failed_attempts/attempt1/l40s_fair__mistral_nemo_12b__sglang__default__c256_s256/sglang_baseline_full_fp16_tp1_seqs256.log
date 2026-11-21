@@ -1,0 +1,5 @@
+/home/ubuntu/projects/Bench2/.venv/lib/python3.12/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+INFO 11-20 20:36:31 [__init__.py:216] Automatically detected platform cuda.
+[2026-11-20 20:36:32] WARNING model_config.py:880: Casting torch.bfloat16 to torch.float16.
+[2026-11-20 20:36:32] WARNING server_args.py:1177: Attention backend not explicitly specified. Use flashinfer backend by default.

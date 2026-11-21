@@ -1,0 +1,21 @@
+<frozen importlib._bootstrap_external>:1297: FutureWarning: The cuda.cuda module is deprecated and will be removed in a future release, please switch to use the cuda.bindings.driver module instead.
+<frozen importlib._bootstrap_external>:1297: FutureWarning: The cuda.cudart module is deprecated and will be removed in a future release, please switch to use the cuda.bindings.runtime module instead.
+Traceback (most recent call last):
+  File "/home/ubuntu/projects/InferenceBench/.venv-trtllm/bin/trtllm-serve", line 3, in <module>
+    from tensorrt_llm.commands.serve import main
+  File "/home/ubuntu/projects/InferenceBench/.venv-trtllm/lib/python3.12/site-packages/tensorrt_llm/__init__.py", line 36, in <module>
+    import tensorrt_llm.functional as functional
+  File "/home/ubuntu/projects/InferenceBench/.venv-trtllm/lib/python3.12/site-packages/tensorrt_llm/functional.py", line 38, in <module>
+    from .quantization import QuantMode
+  File "/home/ubuntu/projects/InferenceBench/.venv-trtllm/lib/python3.12/site-packages/tensorrt_llm/quantization/__init__.py", line 19, in <module>
+    from .quantize_by_modelopt import quantize_and_export, quantize_nemo_and_export
+  File "/home/ubuntu/projects/InferenceBench/.venv-trtllm/lib/python3.12/site-packages/tensorrt_llm/quantization/quantize_by_modelopt.py", line 30, in <module>
+    from datasets import load_dataset
+  File "/home/ubuntu/projects/InferenceBench/.venv-trtllm/lib/python3.12/site-packages/datasets/__init__.py", line 17, in <module>
+    from .arrow_dataset import Dataset
+  File "/home/ubuntu/projects/InferenceBench/.venv-trtllm/lib/python3.12/site-packages/datasets/arrow_dataset.py", line 60, in <module>
+    import pyarrow as pa
+  File "/home/ubuntu/projects/InferenceBench/.venv-trtllm/lib/python3.12/site-packages/pyarrow/__init__.py", line 59, in <module>
+    from pyarrow.lib import (BuildInfo, CppBuildInfo, RuntimeInfo, set_timezone_db_path,
+  File "pyarrow/lib.pyx", line 42, in init pyarrow.lib
+ImportError: pyarrow requires NumPy 2.0 or newer, found 1.26.4

@@ -1,0 +1,10 @@
+GPU: 1x NVIDIA L40S (46 GB), driver 580.178.04 / CUDA 13.0 (July baselines: driver 570, CUDA 12.8)
+Strategy: baseline_full_fp16_tp1 (dtype float16, TP=1, max_model_len 8192, max_num_batched_tokens 8192, prefix caching ON, no chunked-prefill flag, no speculation)
+Memory: gpu_memory_utilization 0.90 -> vLLM --gpu-memory-utilization 0.9, SGLang --mem-fraction-static 0.9, TRT-LLM --kv_cache_free_gpu_memory_fraction 0.9 (same as July: TRT log "fraction is set 0.8999999761581421")
+Client: --max-concurrent 256; scheduler --max-num-seqs-override 256; --num-requests 500; --seed 42
+Timeouts: --ttft-timeout 300 --request-timeout 600
+Rates: low (2 rps) and high (8 rps), Poisson; one fresh server launch per rate (harness behaviour; July baselines did the same)
+Models: meta-llama/Llama-3.1-8B-Instruct rev 0e9e39f249a16976918f6564b8830bc894c89659 (HF id, as July); Mistral-Nemo-Instruct-2407 local snapshot 04d8a90549d23fc6bd7f642064003592df51e9b3 (same path form as July; vLLM auto-adds --enforce-eager for it, as July)
+E1 maxutil: TRT-LLM extra LLM-API options {"scheduler_config":{"capacity_scheduler_policy":"MAX_UTILIZATION"}} via env TRTLLM_EXTRA_LLM_API_OPTIONS (merged into trtllm_config_*.yaml)
+E2 eqkv: POOL = min of the Nov default pools per model; vLLM --num-gpu-blocks-override=POOL/16, SGLang --max-total-tokens=POOL, TRT-LLM kv_cache_config.max_tokens=POOL
+Exact per-launch command lines: launches/*.cmd ; per-launch harness stdout (incl. full engine command): <run>/logs/harness_<rate>.log

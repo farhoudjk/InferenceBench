@@ -1,0 +1,12 @@
+\begin{table}
+\caption{Mechanistic and efficiency metrics: SLO attainment (TTFT-based), queueing delay, inter-token latency, preemption count, energy per output token, and output completion ratio.}
+\label{tab:efficiency}
+\begin{tabular}{lllllll}
+\toprule
+Strategy & SLO Attain. (\%) & Queue Delay P50 (ms) & ITL Mean (ms) & Preemptions & Energy/Token (J) & Completion Ratio \\
+\midrule
+baseline\_full\_fp16\_tp1 & 89.4 & 0 & 42.6 & None & 0.902 & 0.78 \\
+baseline\_full\_fp16\_tp1 & 74.2 & 0 & 73.2 & None & 0.637 & 0.78 \\
+\bottomrule
+\end{tabular}
+\end{table}
